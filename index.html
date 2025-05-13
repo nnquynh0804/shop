@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MintShop – Thời Trang Cao Cấp</title>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=Poppins:wght@300;400;500&display=swap"
+    rel="stylesheet">
+  <style>
+    :root {
+      --main-color: #4e342e;
+      --accent-color: #a1887f;
+      --bg-color: #fdfaf7;
+    }
+
+    #cart-modal {
+    display: none;
+    position: fixed;
+    top: 100px;
+    right: 20px;
+    background: white;
+    border: 1px solid #ccc;
+    padding: 20px;
+    max-width: 350px;
+    width: 100%;
+    z-index: 1000;
+    border-radius: 12px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+    }
+    
+    #cart-modal h3 {
+    margin-top: 0;
+    }
+    
+    #cart-items {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 10px 0;
+    max-height: 200px;
+    overflow-y: auto;
+    }
+    
+    #cart-items li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px dashed #ccc;
+    padding: 8px 0;
+    font-size: 0.95em;
+    }
+    
+    .remove-btn {
+    background: none;
+    color: red;
+    border: none;
+    cursor: pointer;
+    font-size: 0.9em;
+    }
+    
+    #cart-modal .summary {
+    font-weight: bold;
+    margin: 10px 0;
+    }
+    
+    #cart-modal button {
+    margin-top: 10px;
+    padding: 10px 15px;
+    border-radius: 6px;
+    cursor: pointer;
+    }
+    
+    #checkout-btn {
+    background-color: var(--accent-color);
+    color: white;
+    border: none;
+    }
+    
+    #close-cart-btn {
+    background: #eee;
+    color: #333;
+    border: none;
+    margin-left: 10px;
+    }
+    body {
+      margin: 0;
+      font-family: 'Poppins', sans-serif;
+      background-color: var(--bg-color);
+      color: var(--main-color);
+      line-height: 1.6;
+    }
+
+    header {
+      background: linear-gradient(rgba(78, 52, 46, 0.6), rgba(78, 52, 46, 0.6)),
+        url('images/anh-bia-thoi-trang.jpg') center/cover no-repeat;
+      background-color: var(--main-color);
+      height: 100vh;
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      text-align: center;
+      padding: 0 20px;
+    }
+
+    header h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: 4em;
+      margin: 0;
+    }
+
+    header p {
+      font-size: 1.2em;
+      margin: 15px 0;
+    }
+
+    .cta-button {
+      margin-top: 25px;
+      background: white;
+      color: var(--main-color);
+      border: 2px solid white;
+      padding: 14px 34px;
+      font-size: 1em;
+      border-radius: 30px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    .cta-button:hover {
+      background: var(--accent-color);
+      border-color: var(--accent-color);
+      color: #fff;
+    }
+
+    section {
+      max-width: 1200px;
+      margin: 80px auto;
+      padding: 0 20px;
+    }
+
+    .section-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 2.5em;
+      text-align: center;
+      margin-bottom: 50px;
+      color: var(--main-color);
+    }
+
+    .about {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 40px;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .about img {
+      max-width: 500px;
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .about-text {
+      max-width: 500px;
+    }
+
+    .about-text p {
+      font-size: 1.1em;
+    }
+
+    .banner-container {
+      width: 90%;
+      max-width: 1000px;
+      height: 450px;
+      margin: 60px auto;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+    }
+
+    .banner-slide {
+      display: flex;
+      width: 100%;
+      height: 100%;
+      transition: transform 0.5s ease-in-out;
+    }
+
+    .banner-slide img {
+      flex: 0 0 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .products {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 30px;
+    }
+
+    .product {
+      background: white;
+      border: 1px solid #ddd;
+      border-radius: 12px;
+      overflow: hidden;
+      text-align: center;
+      transition: box-shadow 0.3s ease;
+      padding-bottom: 20px;
+    }
+
+    .product:hover {
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+    }
+
+    .product img {
+      width: 100%;
+      height: 240px;
+      object-fit: cover;
+    }
+
+    .product h3 {
+      margin: 15px 0 5px;
+      font-family: 'Playfair Display', serif;
+    }
+
+    .product p {
+      font-size: 1em;
+      color: #555;
+    }
+
+    .video-section {
+      margin-top: 60px;
+      text-align: center;
+    }
+
+    .video-wrapper {
+      position: relative;
+      width: 90%;
+      max-width: 800px;
+      margin: 0 auto;
+      aspect-ratio: 16/9;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    footer {
+      background: var(--main-color);
+      color: #eee;
+      text-align: center;
+      padding: 30px 20px;
+      margin-top: 60px;
+      font-size: 0.95em;
+    }
+
+    #view-cart-btn {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      z-index: 999;
+      background: var(--accent-color);
+      color: #fff;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 30px;
+      cursor: pointer;
+    }
+
+    #cart-modal {
+      display: none;
+      position: fixed;
+      top: 100px;
+      right: 20px;
+      background: white;
+      border: 1px solid #ccc;
+      padding: 20px;
+      max-width: 300px;
+      z-index: 1000;
+      border-radius: 10px;
+    }
+
+    #cart-modal ul {
+      padding-left: 20px;
+    }
+
+    .add-to-cart {
+      background: var(--accent-color);
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 30px;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+  </style>
+</head>
+
+<body>
+  <button id="view-cart-btn">🛒 Giỏ hàng (<span id="cart-count">0</span>)</button>
+
+  <div id="cart-modal">
+    <h3>🛒 Giỏ hàng của bạn</h3>
+    <ul id="cart-items"></ul>
+    <div class="summary">Tổng cộng: <span id="cart-total">0₫</span></div>
+    <button id="checkout-btn">Thanh toán</button>
+    <button id="close-cart-btn">Đóng</button>
+  </div>
+
+  <header>
+    <h1>MintShop</h1>
+    <p>Phong cách tinh tế – Dành cho bạn</p>
+    <button class="cta-button">Khám phá ngay</button>
+  </header>
+
+  <section>
+    <div class="section-title">Về MintShop</div>
+    <div class="about">
+      <img src="images/meo_buong.jpg" alt="MintShop Boutique">
+      <div class="about-text">
+        <p>MintShop là thương hiệu thời trang cao cấp mang đậm phong cách thanh lịch và hiện đại...</p>
+      </div>
+    </div>
+  </section>
+
+  <div class="banner-container">
+    <div class="banner-slide" id="bannerSlide">
+      <img src="images/dam-du-tiec-cao-cap-sang-trong-rot-vai.jpg" alt="Banner 1">
+      <img src="images/ao-blazer-nu-trang-tay-dai-ak10-11.webp" alt="Banner 2">
+      <img src="images/tui_sach_thoi_trang.jpg" alt="Banner 3">
+    </div>
+  </div>
+
+  <section>
+    <div class="section-title">Sản phẩm nổi bật</div>
+    <div class="products">
+      <div class="product">
+        <img src="images/dam-du-tiec-cao-cap-sang-trong-rot-vai.jpg" alt="Váy dự tiệc">
+        <h3>Váy dự tiệc</h3>
+        <p>2.490.000₫</p>
+        <button class="add-to-cart" data-name="Váy dự tiệc" data-price="2490000">Thêm vào giỏ</button>
+      </div>
+      <div class="product">
+        <img src="images/ao-blazer-nu-trang-tay-dai-ak10-11.webp" alt="Áo blazer">
+        <h3>Áo blazer cao cấp</h3>
+        <p>1.790.000₫</p>
+        <button class="add-to-cart" data-name="Áo blazer cao cấp">Thêm vào giỏ</button>
+      </div>
+      <div class="product">
+        <img src="images/tui_sach_thoi_trang.jpg" alt="Túi xách da">
+        <h3>Túi xách da sang trọng</h3>
+        <p>3.200.000₫</p>
+        <button class="add-to-cart" data-name="Túi xách da sang trọng">Thêm vào giỏ</button>
+      </div>
+    </div>
+  </section>
+
+  <section class="video-section">
+    <div class="section-title">Video giới thiệu</div>
+    <div class="video-wrapper">
+      <iframe width="100%" height="450" src="https://www.youtube.com/embed/0c_VRV9LBC0" title="YouTube video player"
+        frameborder="0"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+        allowfullscreen>
+      </iframe>
+    </div>
+  </section>
+
+  <footer>
+    © 2025 MintShop. All rights reserved. Thiết kế bởi bạn 💼
+  </footer>
+
+  <script>
+    // Slide banner
+    let index = 0;
+    const slides = document.getElementById("bannerSlide");
+    const totalSlides = slides.children.length;
+    setInterval(() => {
+      index = (index + 1) % totalSlides;
+      slides.style.transform = `translateX(-${index * 100}%)`;
+    }, 4000);
+
+    // Cart functionality
+    const cart = [];
+    const cartBtn = document.getElementById("view-cart-btn");
+    const cartModal = document.getElementById("cart-modal");
+    const cartItems = document.getElementById("cart-items");
+    const cartCount = document.getElementById("cart-count");
+    const cartTotal = document.getElementById("cart-total");
+    
+    function formatCurrency(value) {
+    return value.toLocaleString("vi-VN") + "₫";
+    }
+    
+    function updateCartDisplay() {
+    cartItems.innerHTML = "";
+    let total = 0;
+    
+    cart.forEach((item, index) => {
+    const li = document.createElement("li");
+    const itemTotal = item.price * item.qty;
+    total += itemTotal;
+    
+    li.innerHTML = `
+    ${item.name} x${item.qty} - ${formatCurrency(itemTotal)}
+    <button class="remove-btn" onclick="removeItem(${index})">X</button>
+    `;
+    cartItems.appendChild(li);
+    });
+    
+    cartCount.textContent = cart.length;
+    cartTotal.textContent = formatCurrency(total);
+    }
+    
+    function removeItem(index) {
+    cart.splice(index, 1);
+    updateCartDisplay();
+    }
+    
+    document.querySelectorAll(".add-to-cart").forEach(button => {
+    button.addEventListener("click", () => {
+    const name = button.getAttribute("data-name");
+    const price = parseInt(button.getAttribute("data-price"));
+    const existing = cart.find(item => item.name === name);
+    if (existing) {
+    existing.qty++;
+    } else {
+    cart.push({ name, price, qty: 1 });
+    }
+    updateCartDisplay();
+    });
+    });
+    
+    cartBtn.addEventListener("click", () => {
+    cartModal.style.display = cartModal.style.display === "none" ? "block" : "none";
+    });
+    
+    document.getElementById("close-cart-btn").addEventListener("click", () => {
+    cartModal.style.display = "none";
+    });
+    
+    document.getElementById("checkout-btn").addEventListener("click", () => {
+    alert("Cảm ơn bạn đã mua hàng! Đây chỉ là bản demo thanh toán.");
+    cart.length = 0;
+    updateCartDisplay();
+    cartModal.style.display = "none";
+    });
+  </script>
+
+  <!--Start of Tawk.to Script-->
+  <script type="text/javascript">
+    var Tawk_API = Tawk_API || {}, Tawk_LoadStart = new Date();
+    (function () {
+      var s1 = document.createElement("script"), s0 = document.getElementsByTagName("script")[0];
+      s1.async = true;
+      s1.src = 'https://embed.tawk.to/6823517cf3a72c190e2fa4d6/1ir4vcjk3';
+      s1.charset = 'UTF-8';
+      s1.setAttribute('crossorigin', '*');
+      s0.parentNode.insertBefore(s1, s0);
+    })();
+  </script>
+  <!--End of Tawk.to Script-->
+</body>
+
+</html>
