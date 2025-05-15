@@ -8,6 +8,8 @@
       font-family: Arial, sans-serif;
       background-color: #f8f8f8;
       padding: 20px;
+      max-width: 700px;
+      margin: auto;
     }
     h1 {
       text-align: center;
@@ -16,8 +18,6 @@
     ul {
       list-style: none;
       padding: 0;
-      max-width: 600px;
-      margin: 20px auto;
     }
     li {
       background: #fff;
@@ -66,34 +66,73 @@
     button:hover {
       background-color: #218838;
     }
+    #qr-code {
+      display: none;
+      max-width: 300px;
+      margin: 30px auto;
+      text-align: center;
+      background: #fff;
+      border-radius: 12px;
+      padding: 20px;
+      box-shadow: 0 0 15px rgba(0,0,0,0.1);
+    }
+    #qr-code img {
+      max-width: 100%;
+      height: auto;
+      border-radius: 10px;
+      border: 1px solid #ccc;
+    }
   </style>
 </head>
 <body>
-  <h1>Giỏ hàng của bạn</h1>
+  <h1>Thanh toán đơn hàng</h1>
   <ul id="checkout-items"></ul>
   <div class="total">Tổng tiền: <span id="checkout-cart-total">0₫</span></div>
-  <button onclick="confirmPayment()">Xác nhận thanh toán</button>
+  <button id="confirm-btn">Xác nhận thanh toán</button>
+
+  <div id="qr-code">
+    <h3>Quét mã QR để thanh toán</h3>
+    <img src="/images/qr-momo.png" alt="QR Code Thanh toán" />
+  </div>
 
   <script>
-  const cartData = localStorage.getItem('cart');
-  if (cartData) {
-    const cart = JSON.parse(cartData);
-    console.log(cart); // kiểm tra dữ liệu nhận được
-
-    // Ví dụ hiển thị danh sách sản phẩm đơn giản:
     const container = document.getElementById('checkout-items');
-    cart.forEach(item => {
-      const div = document.createElement('div');
-      div.innerHTML = `
-        <img src="${item.src}" alt="${item.name}" width="80" />
-        <strong>${item.name}</strong> x${item.qty} - ${item.price.toLocaleString('vi-VN')}₫
-      `;
-      container.appendChild(div);
-    });
-  } else {
-    console.log('Không có dữ liệu giỏ hàng!');
-  }
-</script>
+    const totalEl = document.getElementById('checkout-cart-total');
+    const qrCodeEl = document.getElementById('qr-code');
+    const confirmBtn = document.getElementById('confirm-btn');
 
+    const cartData = localStorage.getItem('cart');
+    if (cartData) {
+      const cart = JSON.parse(cartData);
+      container.innerHTML = '';
+      let total = 0;
+
+      cart.forEach(item => {
+        const li = document.createElement('li');
+        const itemTotal = item.price * item.qty;
+        total += itemTotal;
+
+        li.innerHTML = `
+          <img src="${item.src}" alt="${item.name}" />
+          <div class="info">
+            <div class="name">${item.name}</div>
+            <div>Số lượng: ${item.qty}</div>
+            <div class="price">${itemTotal.toLocaleString('vi-VN')}₫</div>
+          </div>
+        `;
+        container.appendChild(li);
+      });
+
+      totalEl.textContent = total.toLocaleString('vi-VN') + '₫';
+    } else {
+      container.innerHTML = '<li>Không có sản phẩm trong giỏ hàng.</li>';
+      totalEl.textContent = '0₫';
+    }
+
+    confirmBtn.addEventListener('click', () => {
+      qrCodeEl.style.display = 'block';
+      confirmBtn.style.display = 'none';
+    });
+  </script>
 </body>
 </html>
