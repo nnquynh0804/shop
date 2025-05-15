@@ -1,68 +1,37 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-  <meta charset="UTF-8">
-  <title>Trang Thanh Toán</title>
-  <link rel="stylesheet" href="styles.css"> <!-- dùng chung file CSS -->
-  <style>
-    .checkout-container {
-      max-width: 800px;
-      margin: 40px auto;
-      padding: 20px;
-      border: 1px solid #ccc;
-      background: #fff;
-      border-radius: 8px;
-    }
-    .item {
-      display: flex;
-      justify-content: space-between;
-      border-bottom: 1px solid #ddd;
-      padding: 10px 0;
-    }
-    .item:last-child {
-      border-bottom: none;
-    }
-    .item-name {
-      font-weight: bold;
-    }
-    .item-price {
-      color: #009900;
-    }
-  </style>
+  <meta charset="UTF-8" />
+  <title>Thanh Toán - MintShop</title>
 </head>
 <body>
-  <header>
-    <h1>Siêu thị mini - Trang Thanh Toán</h1>
-  </header>
-
-  <div class="checkout-container">
-    <h2>Thông tin đơn hàng</h2>
-    <div id="checkout-items">
-      <!-- Dữ liệu giỏ hàng sẽ hiển thị tại đây -->
-    </div>
-    <h3 id="total-amount">Tổng cộng: 0đ</h3>
-    <button onclick="alert('Thanh toán thành công!')">Xác nhận Thanh Toán</button>
-  </div>
+  <h1>Giỏ hàng của bạn</h1>
+  <ul id="checkout-cart-items"></ul>
+  <div>Tổng tiền: <span id="checkout-cart-total">0₫</span></div>
 
   <script>
-    // Lấy dữ liệu giỏ hàng từ localStorage
-    const cartItems = JSON.parse(localStorage.getItem('cart')) || [];
+    // Hàm format tiền
+    function formatCurrency(value) {
+      return value.toLocaleString("vi-VN") + "₫";
+    }
 
-    const checkoutContainer = document.getElementById('checkout-items');
+    // Lấy giỏ hàng từ localStorage
+    const cart = JSON.parse(localStorage.getItem('cart')) || [];
+
+    // Hiển thị giỏ hàng
+    const cartItemsElem = document.getElementById('checkout-cart-items');
+    const cartTotalElem = document.getElementById('checkout-cart-total');
+
     let total = 0;
-
-    cartItems.forEach(item => {
-      const div = document.createElement('div');
-      div.className = 'item';
-      div.innerHTML = `
-        <span class="item-name">${item.name}</span>
-        <span class="item-price">${item.price}đ x ${item.quantity}</span>
-      `;
-      checkoutContainer.appendChild(div);
-      total += item.price * item.quantity;
+    cart.forEach(item => {
+      const li = document.createElement('li');
+      const itemTotal = item.price * item.qty;
+      total += itemTotal;
+      li.textContent = `${item.name} x${item.qty} - ${formatCurrency(itemTotal)}`;
+      cartItemsElem.appendChild(li);
     });
 
-    document.getElementById('total-amount').textContent = `Tổng cộng: ${total.toLocaleString()}đ`;
+    cartTotalElem.textContent = formatCurrency(total);
   </script>
 </body>
 </html>
