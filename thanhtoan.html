@@ -75,41 +75,25 @@
   <button onclick="confirmPayment()">Xác nhận thanh toán</button>
 
   <script>
-    function formatCurrency(value) {
-      return value.toLocaleString("vi-VN") + "₫";
-    }
+  const cartData = localStorage.getItem('cart');
+  if (cartData) {
+    const cart = JSON.parse(cartData);
+    console.log(cart); // kiểm tra dữ liệu nhận được
 
-    const cart = JSON.parse(localStorage.getItem('cart')) || [];
-
-    const cartItemsElem = document.getElementById('checkout-cart-items');
-    const cartTotalElem = document.getElementById('checkout-cart-total');
-
-    let total = 0;
+    // Ví dụ hiển thị danh sách sản phẩm đơn giản:
+    const container = document.getElementById('checkout-items');
     cart.forEach(item => {
-      const li = document.createElement('li');
-
-      const itemTotal = item.price * item.qty;
-      total += itemTotal;
-
-      li.innerHTML = `
-        <img src="${item.image || 'https://via.placeholder.com/80'}" alt="${item.name}" />
-        <div class="info">
-          <div class="name">${item.name}</div>
-          <div>Số lượng: ${item.qty}</div>
-          <div class="price">${formatCurrency(itemTotal)}</div>
-        </div>
+      const div = document.createElement('div');
+      div.innerHTML = `
+        <img src="${item.src}" alt="${item.name}" width="80" />
+        <strong>${item.name}</strong> x${item.qty} - ${item.price.toLocaleString('vi-VN')}₫
       `;
-
-      cartItemsElem.appendChild(li);
+      container.appendChild(div);
     });
+  } else {
+    console.log('Không có dữ liệu giỏ hàng!');
+  }
+</script>
 
-    cartTotalElem.textContent = formatCurrency(total);
-
-    function confirmPayment() {
-      alert("Cảm ơn bạn đã thanh toán! Đơn hàng của bạn đang được xử lý.");
-      // Có thể xóa giỏ hàng nếu cần:
-      // localStorage.removeItem('cart');
-    }
-  </script>
 </body>
 </html>
