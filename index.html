@@ -338,20 +338,22 @@
         <img src="/images/dam-du-tiec-cao-cap-sang-trong-rot-vai.jpg" alt="Váy dự tiệc">
         <h3>Váy dự tiệc</h3>
         <p>2.490.000₫</p>
-        <button class="add-to-cart" data-name="Váy dự tiệc" data-price="2490000">Thêm vào giỏ</button>
+        <button class="add-to-cart" data-name="Váy dự tiệc" data-price="2490000" data-src="/images/dam-du-tiec-cao-cap-sang-trong-rot-vai.jpg">Thêm vào giỏ</button>
       </div>
-      <div class="product">
-        <img src="/images/ao-blazer-nu-trang-tay-dai-ak10-11.webp" alt="Áo blazer">
-        <h3>Áo blazer cao cấp</h3>
-        <p>1.790.000₫</p>
-        <button class="add-to-cart" data-name="Áo blazer cao cấp">Thêm vào giỏ</button>
-      </div>
-      <div class="product">
-        <img src="/images/tui_sach_thoi_trang.jpg" alt="Túi xách da">
-        <h3>Túi xách da sang trọng</h3>
-        <p>3.200.000₫</p>
-        <button class="add-to-cart" data-name="Túi xách da sang trọng">Thêm vào giỏ</button>
-      </div>
+      <button class="add-to-cart" 
+        data-name="Áo blazer cao cấp" 
+        data-price="1790000" 
+        data-src="/images/ao-blazer-nu-trang-tay-dai-ak10-11.webp">
+      Thêm vào giỏ
+      </button>
+
+      <button class="add-to-cart" 
+              data-name="Túi xách da sang trọng" 
+              data-price="3200000" 
+              data-src="/images/tui_sach_thoi_trang.jpg">
+      Thêm vào giỏ
+      </button>
+
     </div>
   </section>
 
@@ -381,55 +383,61 @@
     }, 4000);
 
     // Cart functionality
-    const cart = [];
-    const cartBtn = document.getElementById("view-cart-btn");
-    const cartModal = document.getElementById("cart-modal");
-    const cartItems = document.getElementById("cart-items");
-    const cartCount = document.getElementById("cart-count");
-    const cartTotal = document.getElementById("cart-total");
-    
-    function formatCurrency(value) {
+  const cart = [];
+  const cartItems = document.getElementById("cart-items");
+  const cartCount = document.getElementById("cart-count");
+  const cartTotal = document.getElementById("cart-total");
+
+  function formatCurrency(value) {
     return value.toLocaleString("vi-VN") + "₫";
-    }
-    
-    function updateCartDisplay() {
+  }
+
+  function updateCartDisplay() {
     cartItems.innerHTML = "";
     let total = 0;
-    
+
     cart.forEach((item, index) => {
-    const li = document.createElement("li");
-    const itemTotal = item.price * item.qty;
-    total += itemTotal;
-    
-    li.innerHTML = `
-    ${item.name} x${item.qty} - ${formatCurrency(itemTotal)}
-    <button class="remove-btn" onclick="removeItem(${index})">X</button>
-    `;
-    cartItems.appendChild(li);
+      const itemTotal = item.price * item.qty;
+      total += itemTotal;
+
+      const li = document.createElement("li");
+      li.innerHTML = `
+        <div style="display:flex; align-items:center; margin-bottom:10px;">
+          <img src="${item.src}" alt="${item.name}" style="width:50px; height:50px; object-fit:cover; margin-right:10px;">
+          <div>
+            <strong>${item.name}</strong> x${item.qty} - ${formatCurrency(itemTotal)}<br>
+            <button class="remove-btn" onclick="removeItem(${index})">X</button>
+          </div>
+        </div>
+      `;
+      cartItems.appendChild(li);
     });
-    
+
     cartCount.textContent = cart.length;
     cartTotal.textContent = formatCurrency(total);
-    }
-    
-    function removeItem(index) {
+  }
+
+  function removeItem(index) {
     cart.splice(index, 1);
     updateCartDisplay();
-    }
-    
-    document.querySelectorAll(".add-to-cart").forEach(button => {
+  }
+
+  document.querySelectorAll(".add-to-cart").forEach(button => {
     button.addEventListener("click", () => {
-    const name = button.getAttribute("data-name");
-    const price = parseInt(button.getAttribute("data-price"));
-    const existing = cart.find(item => item.name === name);
-    if (existing) {
-    existing.qty++;
-    } else {
-    cart.push({ name, price, qty: 1 });
-    }
-    updateCartDisplay();
+      const name = button.getAttribute("data-name");
+      const price = parseInt(button.getAttribute("data-price"));
+      const src = button.getAttribute("data-src");
+
+      const existing = cart.find(item => item.name === name);
+      if (existing) {
+        existing.qty++;
+      } else {
+        cart.push({ name, price, src, qty: 1 });
+      }
+
+      updateCartDisplay();
     });
-    });
+  });
     
     cartBtn.addEventListener("click", () => {
     cartModal.style.display = cartModal.style.display === "none" ? "block" : "none";
