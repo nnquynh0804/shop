@@ -356,7 +356,7 @@
               data-src="/images/tui_sach_thoi_trang.jpg">
       Thêm vào giỏ
       </button>
-
+      </div>
     </div>
   </section>
 
@@ -384,15 +384,20 @@
       index = (index + 1) % totalSlides;
       slides.style.transform = `translateX(-${index * 100}%)`;
     }, 4000);
-
-    // Cart functionality
-  const cart = [];
+  // Khai báo biến cho các phần tử modal và nút giỏ hàng
+  const cartBtn = document.getElementById('view-cart-btn');
+  const cartModal = document.getElementById('cart-modal');
   const cartItems = document.getElementById("cart-items");
   const cartCount = document.getElementById("cart-count");
   const cartTotal = document.getElementById("cart-total");
+  const closeCartBtn = document.getElementById("close-cart-btn");
+  const checkoutBtn = document.getElementById("checkout-btn");
+
+  const cart = [];
 
   function formatCurrency(value) {
-    return value.toLocaleString("vi-VN") + "₫";
+    // Dùng Intl.NumberFormat cho định dạng tiền chuẩn
+    return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(value);
   }
 
   function updateCartDisplay() {
@@ -441,31 +446,25 @@
       updateCartDisplay();
     });
   });
-    
-    cartBtn.addEventListener("click", () => {
-    cartModal.style.display = cartModal.style.display === "none" ? "block" : "none";
-    });
-    
-    document.getElementById("close-cart-btn").addEventListener("click", () => {
+
+  // Mở/đóng modal giỏ hàng
+  cartBtn.addEventListener("click", () => {
+    if (cartModal.style.display === "block") {
+      cartModal.style.display = "none";
+    } else {
+      cartModal.style.display = "block";
+    }
+  });
+
+  closeCartBtn.addEventListener("click", () => {
     cartModal.style.display = "none";
-    });
-    
-    document.getElementById('checkout-btn').addEventListener('click', function () {
-    // Điều hướng sang trang thanh toán
+  });
+
+  checkoutBtn.addEventListener('click', () => {
     localStorage.setItem('cart', JSON.stringify(cart));
     window.location.href = 'thanhtoan.html';
   });
-
-  // Đóng giỏ hàng khi bấm nút Đóng
-  document.getElementById('close-cart-btn').addEventListener('click', function () {
-    document.getElementById('cart-modal').style.display = 'none';
-  });
-
-  // Mở giỏ hàng
-  document.getElementById('view-cart-btn').addEventListener('click', function () {
-    document.getElementById('cart-modal').style.display = 'block';
-  });
-  </script>
+</script>
 
   <!--Start of Tawk.to Script-->
   <script type="text/javascript">
