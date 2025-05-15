@@ -441,6 +441,7 @@
     
     document.getElementById('checkout-btn').addEventListener('click', function () {
     // Điều hướng sang trang thanh toán
+    localStorage.setItem('cart', JSON.stringify(cart));
     window.location.href = 'thanhtoan.html';
   });
 
