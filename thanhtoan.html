@@ -97,20 +97,7 @@
   <button id="paid-btn" style="display:none; margin-top:20px; padding:10px 20px; border:none; background:#007bff; color:#fff; border-radius:6px; cursor:pointer;">Tôi đã thanh toán xong</button>
 
   <script>
-    const paidBtn = document.getElementById('paid-btn');
-
-      confirmBtn.addEventListener('click', () => {
-        qrCodeEl.style.display = 'block';
-        confirmBtn.style.display = 'none';
-        paidBtn.style.display = 'block';  // hiện nút xác nhận thanh toán xong
-      });
-      
-      paidBtn.addEventListener('click', () => {
-        // Xóa giỏ hàng
-        localStorage.removeItem('cart');
-        // Chuyển đến trang cảm ơn (bạn tạo trang thankyou.html)
-        window.location.href = 'thankyou.html';
-      });
+    
 
     const container = document.getElementById('checkout-items');
     const totalEl = document.getElementById('checkout-cart-total');
@@ -149,6 +136,20 @@
       qrCodeEl.style.display = 'block';
       confirmBtn.style.display = 'none';
     });
+    const paidBtn = document.getElementById('paid-btn');
+
+      confirmBtn.addEventListener('click', () => {
+        qrCodeEl.style.display = 'block';
+        confirmBtn.style.display = 'none';
+        paidBtn.style.display = 'block';  // hiện nút xác nhận thanh toán xong
+      });
+      
+      paidBtn.addEventListener('click', () => {
+        // Xóa giỏ hàng
+        localStorage.removeItem('cart');
+        // Chuyển đến trang cảm ơn (bạn tạo trang thankyou.html)
+        window.location.href = 'thankyou.html';
+      });
   </script>
 </body>
 </html>
