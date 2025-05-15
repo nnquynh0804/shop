@@ -439,12 +439,20 @@
     cartModal.style.display = "none";
     });
     
-    document.getElementById("checkout-btn").addEventListener("click", () => {
-    alert("Cảm ơn bạn đã mua hàng! Đây chỉ là bản demo thanh toán.");
-    cart.length = 0;
-    updateCartDisplay();
-    cartModal.style.display = "none";
-    });
+    document.getElementById('checkout-btn').addEventListener('click', function () {
+    // Điều hướng sang trang thanh toán
+    window.location.href = 'thanh-toan.html';
+  });
+
+  // Đóng giỏ hàng khi bấm nút Đóng
+  document.getElementById('close-cart-btn').addEventListener('click', function () {
+    document.getElementById('cart-modal').style.display = 'none';
+  });
+
+  // Mở giỏ hàng
+  document.getElementById('view-cart-btn').addEventListener('click', function () {
+    document.getElementById('cart-modal').style.display = 'block';
+  });
   </script>
 
   <!--Start of Tawk.to Script-->
