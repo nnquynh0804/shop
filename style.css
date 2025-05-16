@@ -197,7 +197,7 @@ footer {
 
 #view-cart-btn {
   position: fixed;
-  top: 20px;
+  top: 90px;
   right: 20px;
   background: var(--main-color);
   color: white;
