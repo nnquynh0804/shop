@@ -116,16 +116,17 @@ function attachAddToCartListeners() {
   });
 }
 
-function addToCart(name, price, src) {
+function addToCart(name, price, src, productId) {
   const existing = cart.find(item => item.name === name);
   if (existing) {
     existing.qty++;
   } else {
-    cart.push({ name, price, src, qty: 1 });
+    cart.push({ name, price, src, qty: 1, productId }); // ✅ Lưu kèm productId
   }
   localStorage.setItem('cart', JSON.stringify(cart));
   renderCart();
 }
+
 
 // Sự kiện mở và đóng giỏ hàng
 if (cartBtn && cartModal) {
