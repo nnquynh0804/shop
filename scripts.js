@@ -32,18 +32,23 @@ function renderCart() {
     li.innerHTML = `
       <div style="display:flex; align-items:center; margin-bottom:10px;">
         <img src="${item.src}" alt="${item.name}" style="width:50px; height:50px; object-fit:cover; margin-right:10px;">
-        <div>
+        <div style="flex:1">
           <strong>${item.name}</strong><br>
           <button onclick="decreaseQty(${index})">-</button>
           <span style="margin: 0 5px;">${item.qty}</span>
           <button onclick="increaseQty(${index})">+</button>
           - ${itemTotal.toLocaleString('vi-VN')}₫
-          <br>
         </div>
+        <button onclick="removeItem(${index})" style="margin-left:10px; background-color: transparent; color: red; border: none; cursor: pointer;">🗑</button>
       </div>
     `;
     cartItemsEl.appendChild(li);
   });
+
+  cartCount.textContent = cart.reduce((sum, item) => sum + item.qty, 0);
+  cartTotal.textContent = total.toLocaleString('vi-VN') + '₫';
+}
+
 
   cartCount.textContent = cart.reduce((sum, item) => sum + item.qty, 0);
   cartTotal.textContent = total.toLocaleString('vi-VN') + '₫';
