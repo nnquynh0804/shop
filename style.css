@@ -10,12 +10,13 @@ body {
   background-color: var(--bg-color);
   color: var(--main-color);
   line-height: 1.6;
+  padding-top: 80px;
+
 }
 
-header {
+.hero {
   background: linear-gradient(rgba(78, 52, 46, 0.6), rgba(78, 52, 46, 0.6)),
     url('/images/anh-bia-thoi-trang.jpg') center/cover no-repeat;
-  background-color: var(--main-color);
   height: 100vh;
   color: white;
   display: flex;
@@ -25,6 +26,7 @@ header {
   text-align: center;
   padding: 0 20px;
 }
+
 
 header h1 {
   font-family: 'Playfair Display', serif;
