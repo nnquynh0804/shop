@@ -1,21 +1,20 @@
-const mockUser = {
-  email: 'user@gmail.com',
-  password: '123456'
-};
-
-const loginForm = document.getElementById('login-form');
-const errorMsg = document.getElementById('login-error');
-
-loginForm.addEventListener('submit', function(e) {
+document.getElementById('login-form').addEventListener('submit', async (e) => {
   e.preventDefault();
-  const email = document.getElementById('email').value.trim();
-  const password = document.getElementById('password').value.trim();
+  const email = document.getElementById('email').value;
+  const password = document.getElementById('password').value;
 
-  if (email === mockUser.email && password === mockUser.password) {
-    localStorage.setItem('isLoggedIn', 'true');
-    localStorage.setItem('userEmail', email);
-    window.location.href = 'index.html'; // hoặc trang chính của bạn
+  const res = await fetch('/auth/login', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email, password })
+  });
+
+  if (res.ok) {
+    const data = await res.json();
+    localStorage.setItem('token', data.token);
+    localStorage.setItem('role', data.role);
+    window.location.href = '/'; // quay về trang chính
   } else {
-    errorMsg.textContent = 'Sai email hoặc mật khẩu!';
+    document.getElementById('message').innerText = 'Sai tài khoản hoặc mật khẩu';
   }
 });
