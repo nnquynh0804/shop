@@ -266,7 +266,7 @@ footer {
 /* Navbar cố định */
 .navbar {
   width: 100%;
-  padding: 16px 32px;
+  padding: 16px 62px;
   background-color: rgba(255, 255, 255, 0.95);
   display: flex;
   justify-content: space-between;
