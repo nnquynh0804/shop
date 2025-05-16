@@ -34,7 +34,12 @@ function renderCart() {
       <div style="display:flex; align-items:center; margin-bottom:10px;">
         <img src="${item.src}" alt="${item.name}" style="width:50px; height:50px; object-fit:cover; margin-right:10px;">
         <div>
-          <strong>${item.name}</strong> x${item.qty} - ${itemTotal.toLocaleString('vi-VN')}₫<br>
+          <strong>${item.name}</strong><br>
+          <button onclick="decreaseQty(${index})">-</button>
+          <span style="margin: 0 5px;">${item.qty}</span>
+          <button onclick="increaseQty(${index})">+</button>
+          - ${itemTotal.toLocaleString('vi-VN')}₫
+          <br>
           <button class="remove-btn" onclick="removeItem(${index})">X</button>
         </div>
       </div>
@@ -45,6 +50,23 @@ function renderCart() {
   cartCount.textContent = cart.reduce((sum, item) => sum + item.qty, 0);
   cartTotal.textContent = total.toLocaleString('vi-VN') + '₫';
 }
+function increaseQty(index) {
+  cart[index].qty++;
+  localStorage.setItem('cart', JSON.stringify(cart));
+  renderCart();
+}
+
+function decreaseQty(index) {
+  if (cart[index].qty > 1) {
+    cart[index].qty--;
+  } else {
+    // Nếu muốn xoá luôn khi về 0 thì bỏ comment dòng sau
+    // cart.splice(index, 1);
+  }
+  localStorage.setItem('cart', JSON.stringify(cart));
+  renderCart();
+}
+
 
 
 function addToCart(name, price, src) {
@@ -66,12 +88,6 @@ document.querySelectorAll('.add-to-cart').forEach(btn => {
     addToCart(name, price, src);
   });
 });
-function removeItem(index) {
-  cart.splice(index, 1);
-  localStorage.setItem('cart', JSON.stringify(cart));
-  renderCart();
-}
-
 cartBtn.addEventListener('click', () => {
   cartModal.style.display = 'flex';
 });
