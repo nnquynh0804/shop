@@ -21,6 +21,10 @@ const checkoutBtn = document.getElementById('checkout-btn');
 
 let cart = JSON.parse(localStorage.getItem('cart')) || [];
 
+// ✅ Xóa các item không có productId (tránh lỗi khi submit)
+cart = cart.filter(item => item.productId);
+localStorage.setItem('cart', JSON.stringify(cart));
+
 function renderCart() {
   if (!cartItemsEl) return;
   cartItemsEl.innerHTML = '';
@@ -111,7 +115,7 @@ function attachAddToCartListeners() {
 }
 
 function addToCart(name, price, src, productId) {
-  const existing = cart.find(item => item.name === name);
+  const existing = cart.find(item => item.name === name && item.productId === productId);
   if (existing) {
     existing.qty++;
   } else {
@@ -121,7 +125,7 @@ function addToCart(name, price, src, productId) {
   renderCart();
 }
 
-// Sự kiện mở và đóng giỏ hàng
+// Sự kiện mở/đóng giỏ hàng
 if (cartBtn && cartModal) {
   cartBtn.addEventListener('click', () => {
     cartModal.style.display = 'flex';
@@ -146,7 +150,7 @@ if (checkoutBtn) {
   });
 }
 
-// Gửi đơn hàng
+// Gửi đơn hàng từ trang thanh toán
 const confirmCheckoutBtn = document.getElementById('confirm-checkout-btn');
 if (confirmCheckoutBtn) {
   confirmCheckoutBtn.addEventListener('click', async () => {
@@ -179,7 +183,7 @@ if (confirmCheckoutBtn) {
     const order = {
       orderCode: 'DH' + Date.now(),
       items: cart.map(i => ({
-        productId: i.productId || '000000',
+        productId: i.productId,
         productName: i.name,
         quantity: i.qty,
         price: i.price
@@ -193,8 +197,9 @@ if (confirmCheckoutBtn) {
       orderStatus: 'PENDING'
     };
 
+    console.log("📦 Gửi đơn hàng:", order);
+
     try {
-      console.log("📦 ORDER BODY:", order);
       const res = await fetch('https://backend-7j0i.onrender.com/orders', {
         method: 'POST',
         headers: {
@@ -205,16 +210,17 @@ if (confirmCheckoutBtn) {
       });
 
       const result = await res.json();
-      if (res.ok) {
+      console.log("🔢 STATUS:", res.status, "🧾 RESPONSE:", result);
+
+      if (res.status === 200 || res.status === 201) {
         alert('✅ Đặt hàng thành công!');
         localStorage.removeItem('cart');
         window.location.href = 'thankyou.html';
       } else {
         alert('❌ ' + (result.message || 'Lỗi đặt hàng'));
-        console.log(result);
       }
     } catch (err) {
-      console.error(err);
+      console.error("❌ FETCH ERROR:", err);
       alert('⚠️ Lỗi kết nối máy chủ');
     }
   });
