@@ -199,6 +199,7 @@ if (confirmCheckoutBtn) {
       paymentMethod: 'COD',
       orderStatus: 'PENDING'
     };
+    console.log("📦 ORDER BODY:", order);
 
     try {
       const res = await fetch('https://backend-7j0i.onrender.com/orders', {
