@@ -3,7 +3,6 @@ const bannerSlide = document.getElementById('bannerSlide');
 if (bannerSlide) {
   const banners = bannerSlide.querySelectorAll('img');
   let currentIndex = 0;
-
   function showNextBanner() {
     currentIndex = (currentIndex + 1) % banners.length;
     bannerSlide.style.transform = `translateX(-${currentIndex * 100}%)`;
@@ -24,14 +23,11 @@ let cart = JSON.parse(localStorage.getItem('cart')) || [];
 
 function renderCart() {
   if (!cartItemsEl) return;
-
   cartItemsEl.innerHTML = '';
   let total = 0;
-
   cart.forEach((item, index) => {
     const itemTotal = item.price * item.qty;
     total += itemTotal;
-
     const li = document.createElement("li");
     li.innerHTML = `
       <div style="display:flex; align-items:center; margin-bottom:10px;">
@@ -48,7 +44,6 @@ function renderCart() {
     `;
     cartItemsEl.appendChild(li);
   });
-
   if (cartCount) cartCount.textContent = cart.reduce((sum, item) => sum + item.qty, 0);
   if (cartTotal) cartTotal.textContent = total.toLocaleString('vi-VN') + '₫';
 }
@@ -74,13 +69,11 @@ function decreaseQty(index) {
 async function fetchAndRenderProducts() {
   const container = document.getElementById('product-list');
   if (!container) return;
-
   container.innerHTML = 'Đang tải sản phẩm...';
   try {
     const res = await fetch('https://backend-7j0i.onrender.com/products');
     const products = await res.json();
     container.innerHTML = '';
-
     products.forEach(product => {
       const div = document.createElement('div');
       div.className = 'product';
@@ -89,6 +82,7 @@ async function fetchAndRenderProducts() {
         <h3>${product.name}</h3>
         <p>${product.price.toLocaleString()}₫</p>
         <button class="add-to-cart"
+          data-id="${product._id}"
           data-name="${product.name}"
           data-price="${product.price}"
           data-src="${product.images}">
@@ -97,7 +91,6 @@ async function fetchAndRenderProducts() {
       `;
       container.appendChild(div);
     });
-
     attachAddToCartListeners();
   } catch (err) {
     container.innerHTML = 'Không thể tải sản phẩm. Vui lòng thử lại.';
@@ -111,7 +104,8 @@ function attachAddToCartListeners() {
       const name = btn.dataset.name;
       const price = parseInt(btn.dataset.price);
       const src = btn.dataset.src;
-      addToCart(name, price, src);
+      const productId = btn.dataset.id;
+      addToCart(name, price, src, productId);
     });
   });
 }
@@ -121,12 +115,11 @@ function addToCart(name, price, src, productId) {
   if (existing) {
     existing.qty++;
   } else {
-    cart.push({ name, price, src, qty: 1, productId }); // ✅ Lưu kèm productId
+    cart.push({ name, price, src, qty: 1, productId });
   }
   localStorage.setItem('cart', JSON.stringify(cart));
   renderCart();
 }
-
 
 // Sự kiện mở và đóng giỏ hàng
 if (cartBtn && cartModal) {
@@ -153,14 +146,13 @@ if (checkoutBtn) {
   });
 }
 
-// Gửi đơn hàng từ trang thanhtoan.html
+// Gửi đơn hàng
 const confirmCheckoutBtn = document.getElementById('confirm-checkout-btn');
 if (confirmCheckoutBtn) {
   confirmCheckoutBtn.addEventListener('click', async () => {
     const fullName = document.getElementById('fullName')?.value;
     const phone = document.getElementById('phone')?.value;
     const address = document.getElementById('address')?.value;
-
     if (!fullName || !phone || !address) {
       alert("Vui lòng nhập đầy đủ thông tin giao hàng");
       return;
@@ -200,7 +192,6 @@ if (confirmCheckoutBtn) {
       paymentMethod: 'COD',
       orderStatus: 'PENDING'
     };
-    
 
     try {
       console.log("📦 ORDER BODY:", order);
@@ -229,15 +220,11 @@ if (confirmCheckoutBtn) {
   });
 }
 
-
-// Hiển thị link đăng nhập / đăng ký hoặc tên người dùng
+// Hiển thị nav
 function renderNavAuthLinks() {
   const nav = document.getElementById('nav-auth-links');
   const token = localStorage.getItem('token');
-  const role = localStorage.getItem('role');
-
   if (!nav) return;
-
   if (token) {
     const userName = localStorage.getItem('userName') || 'Khách';
     nav.innerHTML = `
@@ -259,7 +246,7 @@ function logout() {
   window.location.reload();
 }
 
-// Gọi khi load trang
+// Khởi động
 renderNavAuthLinks();
 renderCart();
 fetchAndRenderProducts();
