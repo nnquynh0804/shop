@@ -40,7 +40,6 @@ function renderCart() {
           <button onclick="increaseQty(${index})">+</button>
           - ${itemTotal.toLocaleString('vi-VN')}₫
           <br>
-          <button class="remove-btn" onclick="removeItem(${index})">X</button>
         </div>
       </div>
     `;
