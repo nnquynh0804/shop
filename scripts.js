@@ -25,11 +25,17 @@ function renderCart() {
   cartItemsEl.innerHTML = '';
   let total = 0;
   cart.forEach(item => {
-    const li = document.createElement('li');
-    li.textContent = `${item.name} - ${item.price.toLocaleString('vi-VN')}₫ x ${item.qty}`;
-    cartItemsEl.appendChild(li);
-    total += item.price * item.qty;
-  });
+   const li = document.createElement("li");
+      li.innerHTML = 
+        <div style="display:flex; align-items:center; margin-bottom:10px;">
+          <img src="${item.src}" alt="${item.name}" style="width:50px; height:50px; object-fit:cover; margin-right:10px;">
+          <div>
+            <strong>${item.name}</strong> x${item.qty} - ${formatCurrency(itemTotal)}<br>
+            <button class="remove-btn" onclick="removeItem(${index})">X</button>
+         </div>
+          </div>;
+   cartItems.appendChild(li);
+   });
   cartCount.textContent = cart.reduce((sum, item) => sum + item.qty, 0);
   cartTotal.textContent = total.toLocaleString('vi-VN') + '₫';
 }
