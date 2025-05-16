@@ -3,7 +3,7 @@ document.getElementById('login-form').addEventListener('submit', async (e) => {
   const email = document.getElementById('email').value;
   const password = document.getElementById('password').value;
 
-  const res = await fetch('/auth/login', {
+  const res = await fetch('https://backend-7j0i.onrender.com/auth/login', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ email, password })
