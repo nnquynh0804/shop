@@ -65,6 +65,53 @@ function decreaseQty(index) {
   localStorage.setItem('cart', JSON.stringify(cart));
   renderCart();
 }
+async function fetchAndRenderProducts() {
+  const container = document.getElementById('product-list');
+  container.innerHTML = 'Đang tải sản phẩm...';
+
+  try {
+    const res = await fetch('https://backend-7j0i.onrender.com/api/products');
+    const products = await res.json();
+
+    container.innerHTML = ''; // Xóa nội dung cũ
+
+    products.forEach(product => {
+      const div = document.createElement('div');
+      div.className = 'product';
+      div.innerHTML = `
+        <img src="${product.image}" alt="${product.name}" />
+        <h3>${product.name}</h3>
+        <p>${product.price.toLocaleString()}₫</p>
+        <button class="add-to-cart"
+          data-name="${product.name}"
+          data-price="${product.price}"
+          data-src="${product.image}">
+          Thêm vào giỏ
+        </button>
+      `;
+      container.appendChild(div);
+    });
+
+    attachAddToCartListeners(); // Gắn sự kiện cho nút
+  } catch (err) {
+    container.innerHTML = 'Không thể tải sản phẩm. Vui lòng thử lại.';
+    console.error(err);
+  }
+}
+
+fetchAndRenderProducts(); // Gọi khi load trang
+
+// Hàm để gắn lại sự kiện "Thêm vào giỏ"
+function attachAddToCartListeners() {
+  document.querySelectorAll('.add-to-cart').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const name = btn.dataset.name;
+      const price = parseInt(btn.dataset.price);
+      const src = btn.dataset.src;
+      addToCart(name, price, src);
+    });
+  });
+}
 
 
 
