@@ -261,6 +261,33 @@ footer {
   font-weight: 600;
   margin-bottom: 10px;
 }
+.navbar {
+  background-color: #fff;
+  border-bottom: 1px solid #eee;
+  padding: 12px 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-family: 'Poppins', sans-serif;
+}
+
+.navbar .logo {
+  font-weight: 600;
+  font-size: 20px;
+  color: #a47148;
+}
+
+.nav-links a {
+  margin-left: 15px;
+  text-decoration: none;
+  color: #a47148;
+  font-weight: 500;
+}
+
+.nav-links a:hover {
+  text-decoration: underline;
+}
+
 
 #close-cart-btn {
   background: #a1887f;
