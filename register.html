@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Đăng ký</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background: #f5f0eb;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+    .register-container {
+      background: #fffaf4;
+      padding: 30px 40px;
+      border-radius: 12px;
+      box-shadow: 0 4px 20px rgba(96, 64, 32, 0.15);
+      max-width: 400px;
+      width: 100%;
+      text-align: center;
+    }
+    input, button {
+      width: 100%;
+      margin-bottom: 12px;
+      padding: 10px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      font-size: 14px;
+    }
+    button {
+      background: #a47148;
+      color: #fff;
+      border: none;
+      cursor: pointer;
+    }
+    .register-links a {
+      color: #a47148;
+      text-decoration: none;
+      font-size: 14px;
+    }
+  </style>
+</head>
+<body>
+  <div class="register-container">
+    <h2>Đăng ký tài khoản</h2>
+    <form id="register-form">
+      <input type="text" id="fullName" placeholder="Họ và tên" required />
+      <input type="email" id="email" placeholder="Email" required />
+      <input type="tel" id="phone" placeholder="Số điện thoại" required />
+      <input type="text" id="address" placeholder="Địa chỉ" required />
+      <input type="date" id="dob" required />
+      <input type="password" id="password" placeholder="Mật khẩu" required />
+      <button type="submit">Đăng ký</button>
+    </form>
+    <div class="register-links">
+      <a href="login.html">Quay lại đăng nhập</a>
+    </div>
+    <p id="register-error" style="color: red;"></p>
+    <p id="register-success" style="color: green;"></p>
+  </div>
+  <script>
+    document.getElementById('register-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const data = {
+        fullName: document.getElementById('fullName').value,
+        email: document.getElementById('email').value,
+        phone: document.getElementById('phone').value,
+        address: document.getElementById('address').value,
+        dob: document.getElementById('dob').value,
+        password: document.getElementById('password').value
+      };
+
+      const res = await fetch('/api/auth/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+      });
+
+      const result = await res.json();
+      if (res.ok) {
+        document.getElementById('register-success').innerText = 'Đăng ký thành công! Đang chuyển hướng...';
+        setTimeout(() => window.location.href = 'login.html', 2000);
+      } else {
+        document.getElementById('register-error').innerText = result.message || 'Lỗi đăng ký';
+      }
+    });
+  </script>
+</body>
+</html>
