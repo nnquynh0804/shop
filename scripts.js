@@ -85,7 +85,7 @@ async function fetchAndRenderProducts() {
         <button class="add-to-cart"
           data-name="${product.name}"
           data-price="${product.price}"
-          data-src="${product.image}">
+          data-src="${product.images}">
           Thêm vào giỏ
         </button>
       `;
