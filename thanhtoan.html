@@ -84,23 +84,33 @@
       background-color: #704a2c;
     }
 
-    input {
-      display: block;
-      width: 100%;
-      padding: 10px;
-      margin: 10px 0;
-      border-radius: 6px;
-      border: 1px solid #cdb8a0;
-      background: #fffefc;
-    }
+    /* Chỉ áp dụng cho các input nhập liệu, không phải radio */
+/* Áp dụng riêng cho các ô nhập liệu */
+input[type="text"],
+input[type="tel"],
+input[type="email"],
+input[type="number"],
+input#fullName,
+input#phone,
+input#address {
+  display: block;
+  width: 100%;
+  padding: 10px;
+  margin: 10px 0;
+  border-radius: 6px;
+  border: 1px solid #cdb8a0;
+  background: #fffefc;
+}
 
-    label {
+/* Căn chỉnh label chứa radio và chữ */
+label {
   display: flex;
-  align-items: center; /* căn giữa theo chiều dọc */
-  gap: 2px; /* khoảng cách giữa input và chữ */
+  align-items: center;
+  gap: 8px; /* khoảng cách giữa nút và chữ */
   margin-top: 10px;
   font-size: 15px;
 }
+
 
     #qr-code {
       display: none;
