@@ -15,7 +15,7 @@ document.getElementById('login-form').addEventListener('submit', async (e) => {
   if (res.ok) {
     localStorage.setItem('token', result.token);
     localStorage.setItem('role', result.role);
-    window.location.href = '/';
+    window.location.href = '/index.html';
   } else {
     errorEl.textContent = result.message || 'Sai thông tin đăng nhập';
   }
