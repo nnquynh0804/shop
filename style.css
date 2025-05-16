@@ -261,9 +261,10 @@ footer {
   font-weight: 600;
   margin-bottom: 10px;
 }
+/* Navbar cố định */
 .navbar {
   width: 100%;
-  padding: 20px 40px;
+  padding: 16px 32px;
   background-color: rgba(255, 255, 255, 0.95);
   display: flex;
   justify-content: space-between;
@@ -272,10 +273,10 @@ footer {
   top: 0;
   left: 0;
   z-index: 999;
-  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-  font-family: 'Poppins', sans-serif;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
 }
 
+/* Logo và link */
 .logo {
   font-size: 22px;
   font-weight: 600;
