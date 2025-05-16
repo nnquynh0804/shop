@@ -24,21 +24,28 @@ let cart = JSON.parse(localStorage.getItem('cart')) || [];
 function renderCart() {
   cartItemsEl.innerHTML = '';
   let total = 0;
-  cart.forEach(item => {
-   const li = document.createElement("li");
-      li.innerHTML = 
-        <div style="display:flex; align-items:center; margin-bottom:10px;">
-          <img src="${item.src}" alt="${item.name}" style="width:50px; height:50px; object-fit:cover; margin-right:10px;">
-          <div>
-            <strong>${item.name}</strong> x${item.qty} - ${formatCurrency(itemTotal)}<br>
-            <button class="remove-btn" onclick="removeItem(${index})">X</button>
-         </div>
-          </div>;
-   cartItems.appendChild(li);
-   });
+
+  cart.forEach((item, index) => {
+    const itemTotal = item.price * item.qty;
+    total += itemTotal;
+
+    const li = document.createElement("li");
+    li.innerHTML = `
+      <div style="display:flex; align-items:center; margin-bottom:10px;">
+        <img src="${item.src}" alt="${item.name}" style="width:50px; height:50px; object-fit:cover; margin-right:10px;">
+        <div>
+          <strong>${item.name}</strong> x${item.qty} - ${itemTotal.toLocaleString('vi-VN')}₫<br>
+          <button class="remove-btn" onclick="removeItem(${index})">X</button>
+        </div>
+      </div>
+    `;
+    cartItemsEl.appendChild(li);
+  });
+
   cartCount.textContent = cart.reduce((sum, item) => sum + item.qty, 0);
   cartTotal.textContent = total.toLocaleString('vi-VN') + '₫';
 }
+
 
 function addToCart(name, price, src) {
   const existing = cart.find(item => item.name === name);
@@ -59,6 +66,11 @@ document.querySelectorAll('.add-to-cart').forEach(btn => {
     addToCart(name, price, src);
   });
 });
+function removeItem(index) {
+  cart.splice(index, 1);
+  localStorage.setItem('cart', JSON.stringify(cart));
+  renderCart();
+}
 
 cartBtn.addEventListener('click', () => {
   cartModal.style.display = 'flex';
