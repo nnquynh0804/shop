@@ -10,6 +10,7 @@
     th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
     th { background-color: #f5f5f5; }
     .section { margin-bottom: 40px; }
+    button { margin-right: 5px; }
   </style>
 </head>
 <body>
@@ -19,37 +20,25 @@
 
   <div class="section">
     <h2>📦 Quản lý Hàng hóa</h2>
-    <table id="products-table">
-      <thead>
-        <tr><th>Tên sản phẩm</th><th>Giá</th><th>Số lượng</th></tr>
-      </thead>
-      <tbody></tbody>
-    </table>
+    <button onclick="window.location.href='products.html'">Danh sách sản phẩm (xem/sửa/xóa)</button>
+    <button onclick="window.location.href='product-add.html'">Thêm sản phẩm</button>
+    <button onclick="window.location.href='product-edit.html'">Chỉnh sửa sản phẩm</button>
   </div>
 
   <div class="section">
     <h2>🧾 Quản lý Đơn hàng</h2>
-    <table id="orders-table">
-      <thead>
-        <tr><th>Mã đơn</th><th>Khách</th><th>Tổng tiền</th><th>Trạng thái</th></tr>
-      </thead>
-      <tbody></tbody>
-    </table>
+    <button onclick="window.location.href='orders.html'">Danh sách đơn hàng (lọc và cập nhật trạng thái)</button>
+    <button onclick="window.location.href='order-edit.html'">Chỉnh sửa đơn hàng</button>
   </div>
 
   <div class="section">
     <h2>👤 Quản lý Khách hàng</h2>
-    <table id="customers-table">
-      <thead>
-        <tr><th>Email</th><th>Họ tên</th><th>SĐT</th></tr>
-      </thead>
-      <tbody></tbody>
-    </table>
+    <button onclick="window.location.href='customers.html'">Danh sách khách hàng (tìm kiếm theo tên/email)</button>
+    <button onclick="window.location.href='customer-edit.html'">Chỉnh sửa khách hàng</button>
   </div>
 
   <script>
     const role = localStorage.getItem('role');
-    const token = localStorage.getItem('token');
     const adminName = localStorage.getItem('userName') || 'Admin';
 
     if (role !== 'admin') {
@@ -59,48 +48,10 @@
 
     document.getElementById('admin-name').textContent = adminName;
 
-    async function fetchAndRender(endpoint, tableId, mapRow) {
-      try {
-        const res = await fetch(`https://backend-7j0i.onrender.com${endpoint}`, {
-          headers: { Authorization: `Bearer ${token}` }
-        });
-        const data = await res.json();
-        const tbody = document.querySelector(`${tableId} tbody`);
-        tbody.innerHTML = '';
-        data.forEach(item => {
-          const row = mapRow(item);
-          tbody.appendChild(row);
-        });
-      } catch (err) {
-        console.error(`Lỗi khi tải ${endpoint}:`, err);
-      }
-    }
-
-    function createRow(cells) {
-      const tr = document.createElement('tr');
-      cells.forEach(text => {
-        const td = document.createElement('td');
-        td.textContent = text;
-        tr.appendChild(td);
-      });
-      return tr;
-    }
-
     function logout() {
       localStorage.clear();
       window.location.href = '/login.html';
     }
-
-    // Load dữ liệu
-    fetchAndRender('/products', '#products-table', (p) =>
-      createRow([p.name, `${p.price}₫`, p.quantity])
-    );
-    fetchAndRender('/orders', '#orders-table', (o) =>
-      createRow([o.orderCode, o.shippingAddress?.fullName, `${o.finalAmount}₫`, o.orderStatus])
-    );
-    fetchAndRender('/customers', '#customers-table', (c) =>
-      createRow([c.email, c.fullName, c.phone])
-    );
   </script>
 </body>
 </html>
