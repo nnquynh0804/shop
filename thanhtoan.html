@@ -89,7 +89,14 @@
   <ul id="checkout-items"></ul>
   <div class="total">Tổng tiền: <span id="checkout-cart-total">0₫</span></div>
   <button id="confirm-btn">Xác nhận thanh toán</button>
-
+  
+  <h3>Thông tin giao hàng</h3>
+  <input id="fullName" placeholder="Họ tên người nhận" required><br>
+  <input id="phone" placeholder="Số điện thoại" required><br>
+  <input id="address" placeholder="Địa chỉ" required><br>
+  
+  <label><input type="radio" name="payment" value="COD" checked /> Thanh toán khi nhận hàng</label>
+  <button id="confirm-checkout-btn">Xác nhận thanh toán</button>
   <div id="qr-code">
     <h3>Quét mã QR để thanh toán</h3>
     <img src="/images/qr-momo.jpg" alt="QR Code Thanh toán" />
