@@ -70,7 +70,7 @@ async function fetchAndRenderProducts() {
   container.innerHTML = 'Đang tải sản phẩm...';
 
   try {
-    const res = await fetch('https://backend-7j0i.onrender.com/api/products');
+    const res = await fetch('https://backend-7j0i.onrender.com/products');
     const products = await res.json();
 
     container.innerHTML = ''; // Xóa nội dung cũ
