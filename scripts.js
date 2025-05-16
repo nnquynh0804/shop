@@ -142,6 +142,56 @@ checkoutBtn.addEventListener('click', () => {
     window.location.href = 'thanhtoan.html';
   }
 });
+document.getElementById('confirm-checkout-btn').addEventListener('click', async () => {
+  const fullName = document.getElementById('fullName').value;
+  const phone = document.getElementById('phone').value;
+  const address = document.getElementById('address').value;
+
+  const totalAmount = cart.reduce((sum, i) => sum + i.qty * i.price, 0);
+  const shippingFee = 30000;
+  const discount = 0;
+  const finalAmount = totalAmount + shippingFee - discount;
+
+  const order = {
+    orderCode: 'DH' + Date.now(),
+    items: cart.map(i => ({
+      productId: i.productId || '000000', // fallback nếu thiếu
+      productName: i.name,
+      quantity: i.qty,
+      price: i.price
+    })),
+    totalAmount,
+    shippingFee,
+    discount,
+    finalAmount,
+    shippingAddress: { fullName, phone, address },
+    paymentMethod: 'COD',
+    orderStatus: 'PENDING'
+  };
+
+  try {
+    const res = await fetch('https://backend-7j0i.onrender.com/api/orders', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`
+      },
+      body: JSON.stringify(order)
+    });
+
+    const result = await res.json();
+    if (res.ok) {
+      alert('🎉 Đặt hàng thành công!');
+      localStorage.removeItem('cart');
+      window.location.href = '/thankyou.html';
+    } else {
+      alert('❌ ' + (result.message || 'Không thể đặt hàng'));
+    }
+  } catch (err) {
+    console.error(err);
+    alert('⚠️ Lỗi kết nối máy chủ');
+  }
+});
 // Hiển thị link đăng nhập / đăng ký hoặc tên người dùng
 function renderNavAuthLinks() {
   const nav = document.getElementById('nav-auth-links');
