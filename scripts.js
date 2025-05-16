@@ -201,7 +201,7 @@ if (confirmCheckoutBtn) {
     };
 
     try {
-      const res = await fetch('https://backend-7j0i.onrender.com/api/orders', {
+      const res = await fetch('https://backend-7j0i.onrender.com/orders', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
