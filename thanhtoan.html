@@ -84,33 +84,29 @@
       background-color: #704a2c;
     }
 
-    /* Chỉ áp dụng cho các input nhập liệu, không phải radio */
-/* Áp dụng riêng cho các ô nhập liệu */
-input[type="text"],
-input[type="tel"],
-input[type="email"],
-input[type="number"],
-input#fullName,
-input#phone,
-input#address {
-  display: block;
-  width: 100%;
-  padding: 10px;
-  margin: 10px 0;
-  border-radius: 6px;
-  border: 1px solid #cdb8a0;
-  background: #fffefc;
-}
+    input[type="text"],
+    input[type="tel"],
+    input[type="email"],
+    input[type="number"],
+    input#fullName,
+    input#phone,
+    input#address {
+      display: block;
+      width: 100%;
+      padding: 10px;
+      margin: 10px 0;
+      border-radius: 6px;
+      border: 1px solid #cdb8a0;
+      background: #fffefc;
+    }
 
-/* Căn chỉnh label chứa radio và chữ */
-label {
-  display: flex;
-  align-items: center;
-  gap: 8px; /* khoảng cách giữa nút và chữ */
-  margin-top: 10px;
-  font-size: 15px;
-}
-
+    label {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 10px;
+      font-size: 15px;
+    }
 
     #qr-code {
       display: none;
@@ -141,16 +137,16 @@ label {
   <h1>Thanh toán đơn hàng</h1>
   <ul id="checkout-items"></ul>
   <div class="total">Tổng tiền: <span id="checkout-cart-total">0₫</span></div>
-  <button id="confirm-btn">Xác nhận thanh toán</button>
+
+  <button id="confirm-btn">Xác nhận bằng QR</button>
 
   <h3>Thông tin giao hàng</h3>
   <input id="fullName" placeholder="Họ tên người nhận" required />
   <input id="phone" placeholder="Số điện thoại" required />
   <input id="address" placeholder="Địa chỉ" required />
   <label><input type="radio" name="payment" value="COD" checked /> Thanh toán khi nhận hàng</label>
-<label><input type="radio" name="payment" value="bank" /> Chuyển khoản ngân hàng</label>
-<label><input type="radio" name="payment" value="momo" /> Ví MoMo</label>
-
+  <label><input type="radio" name="payment" value="bank" /> Chuyển khoản ngân hàng</label>
+  <label><input type="radio" name="payment" value="momo" /> Ví MoMo</label>
 
   <button id="confirm-checkout-btn">Xác nhận thanh toán</button>
 
@@ -173,12 +169,10 @@ label {
       const cart = JSON.parse(cartData);
       container.innerHTML = '';
       let total = 0;
-
       cart.forEach(item => {
         const li = document.createElement('li');
         const itemTotal = item.price * item.qty;
         total += itemTotal;
-
         li.innerHTML = `
           <img src="${item.src}" alt="${item.name}" />
           <div class="info">
@@ -189,7 +183,6 @@ label {
         `;
         container.appendChild(li);
       });
-
       totalEl.textContent = total.toLocaleString('vi-VN') + '₫';
     } else {
       container.innerHTML = '<li>Không có sản phẩm trong giỏ hàng.</li>';
@@ -197,86 +190,94 @@ label {
     }
 
     confirmBtn.addEventListener('click', () => {
-      qrCodeEl.style.display = 'block';
-      confirmBtn.style.display = 'none';
-      paidBtn.style.display = 'block';
+      const selected = document.querySelector('input[name="payment"]:checked')?.value;
+      if (selected === 'momo') {
+        qrCodeEl.style.display = 'block';
+        confirmBtn.style.display = 'none';
+        paidBtn.style.display = 'block';
+      } else {
+        alert('Chỉ hiển thị mã QR nếu bạn chọn Ví MoMo.');
+      }
     });
 
     paidBtn.addEventListener('click', () => {
       localStorage.removeItem('cart');
       window.location.href = 'thankyou.html';
     });
+
     const confirmCheckoutBtn = document.getElementById('confirm-checkout-btn');
-  if (confirmCheckoutBtn) {
-    confirmCheckoutBtn.addEventListener('click', async () => {
-      const fullName = document.getElementById('fullName')?.value;
-      const phone = document.getElementById('phone')?.value;
-      const address = document.getElementById('address')?.value;
-      const token = localStorage.getItem('token');
-      const cart = JSON.parse(localStorage.getItem('cart') || '[]');
+    if (confirmCheckoutBtn) {
+      confirmCheckoutBtn.addEventListener('click', async () => {
+        const fullName = document.getElementById('fullName')?.value;
+        const phone = document.getElementById('phone')?.value;
+        const address = document.getElementById('address')?.value;
+        const paymentMethod = document.querySelector('input[name="payment"]:checked')?.value || 'COD';
+        const token = localStorage.getItem('token');
+        const cart = JSON.parse(localStorage.getItem('cart') || '[]');
 
-      if (!fullName || !phone || !address) {
-        alert('Vui lòng nhập đầy đủ thông tin giao hàng.');
-        return;
-      }
-
-      if (!token) {
-        alert('Bạn cần đăng nhập để thanh toán.');
-        window.location.href = 'login.html';
-        return;
-      }
-
-      if (!cart.length) {
-        alert('Giỏ hàng trống.');
-        return;
-      }
-
-      const totalAmount = cart.reduce((sum, i) => sum + i.qty * i.price, 0);
-      const shippingFee = 30000;
-      const discount = 0;
-      const finalAmount = totalAmount + shippingFee - discount;
-
-      const order = {
-        orderCode: 'DH' + Date.now(),
-        items: cart.map(i => ({
-          productId: i.productId || '000000',
-          productName: i.name,
-          quantity: i.qty,
-          price: i.price
-        })),
-        totalAmount,
-        shippingFee,
-        discount,
-        finalAmount,
-        shippingAddress: { fullName, phone, address },
-        paymentMethod: 'COD',
-        orderStatus: 'PENDING'
-      };
-
-      try {
-        const res = await fetch('https://backend-7j0i.onrender.com/orders', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${token}`
-          },
-          body: JSON.stringify(order)
-        });
-
-        const result = await res.json();
-        if (res.ok) {
-          alert('✅ Đặt hàng thành công!');
-          localStorage.removeItem('cart');
-          window.location.href = 'thankyou.html';
-        } else {
-          alert('❌ ' + (result.message || 'Không thể đặt hàng'));
+        if (!fullName || !phone || !address) {
+          alert('Vui lòng nhập đầy đủ thông tin giao hàng.');
+          return;
         }
-      } catch (err) {
-        console.error(err);
-        alert('⚠️ Lỗi kết nối máy chủ');
-      }
-    });
-  }
+
+        if (!token) {
+          alert('Bạn cần đăng nhập để thanh toán.');
+          window.location.href = 'login.html';
+          return;
+        }
+
+        if (!cart.length) {
+          alert('Giỏ hàng trống.');
+          return;
+        }
+
+        const totalAmount = cart.reduce((sum, i) => sum + i.qty * i.price, 0);
+        const shippingFee = 30000;
+        const discount = 0;
+        const finalAmount = totalAmount + shippingFee - discount;
+
+        const order = {
+          orderCode: 'DH' + Date.now(),
+          items: cart.map(i => ({
+            productId: i.productId || '000000',
+            productName: i.name,
+            quantity: i.qty,
+            price: i.price
+          })),
+          totalAmount,
+          shippingFee,
+          discount,
+          finalAmount,
+          shippingAddress: { fullName, phone, address },
+          paymentMethod: paymentMethod,
+          orderStatus: 'PENDING'
+        };
+
+        try {
+          const res = await fetch('https://backend-7j0i.onrender.com/orders', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${token}`
+            },
+            body: JSON.stringify(order)
+          });
+
+          const result = await res.json();
+          if (res.ok) {
+            alert('✅ Đặt hàng thành công!');
+            localStorage.setItem('lastOrderCode', order.orderCode);
+            localStorage.removeItem('cart');
+            window.location.href = 'thankyou.html';
+          } else {
+            alert('❌ ' + (result.message || 'Không thể đặt hàng'));
+          }
+        } catch (err) {
+          console.error(err);
+          alert('⚠️ Lỗi kết nối máy chủ');
+        }
+      });
+    }
   </script>
 </body>
 </html>
