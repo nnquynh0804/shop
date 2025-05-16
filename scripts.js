@@ -136,7 +136,34 @@ checkoutBtn.addEventListener('click', () => {
     window.location.href = 'thanhtoan.html';
   }
 });
+// Hiển thị link đăng nhập / đăng ký hoặc tên người dùng
+function renderNavAuthLinks() {
+  const nav = document.getElementById('nav-auth-links');
+  const token = localStorage.getItem('token');
+  const role = localStorage.getItem('role');
 
+  if (token) {
+    const userName = localStorage.getItem('userName') || 'Khách';
+    nav.innerHTML = `
+      <span>👋 Xin chào, ${userName}</span>
+      <a href="#" onclick="logout()">Đăng xuất</a>
+    `;
+  } else {
+    nav.innerHTML = `
+      <a href="login.html">Đăng nhập</a>
+      <a href="register.html">Đăng ký</a>
+    `;
+  }
+}
+
+function logout() {
+  localStorage.removeItem('token');
+  localStorage.removeItem('role');
+  localStorage.removeItem('userName');
+  window.location.reload();
+}
+
+renderNavAuthLinks();
 // Gọi khi load trang
 renderCart();
 fetchAndRenderProducts();
