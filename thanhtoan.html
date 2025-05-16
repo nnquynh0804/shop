@@ -264,14 +264,15 @@
           });
 
           const result = await res.json();
-          if (res.ok) {
-            alert('✅ Đặt hàng thành công!');
-            localStorage.setItem('lastOrderCode', order.orderCode);
-            localStorage.removeItem('cart');
-            window.location.href = 'thankyou.html';
-          } else {
-            alert('❌ ' + (result.message || 'Không thể đặt hàng'));
-          }
+          if (res.status === 200 || res.status === 201) {
+  alert('✅ Đặt hàng thành công!');
+  localStorage.setItem('lastOrderCode', order.orderCode);
+  localStorage.removeItem('cart');
+  window.location.href = 'thankyou.html';
+} else {
+  alert('❌ ' + (result.message || 'Không thể đặt hàng'));
+}
+
         } catch (err) {
           console.error(err);
           alert('⚠️ Lỗi kết nối máy chủ');
