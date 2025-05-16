@@ -160,6 +160,24 @@ if (confirmCheckoutBtn) {
     const phone = document.getElementById('phone')?.value;
     const address = document.getElementById('address')?.value;
 
+    if (!fullName || !phone || !address) {
+      alert("Vui lòng nhập đầy đủ thông tin giao hàng");
+      return;
+    }
+
+    const token = localStorage.getItem('token');
+    if (!token) {
+      alert("Bạn cần đăng nhập để thanh toán");
+      window.location.href = 'login.html';
+      return;
+    }
+
+    const cart = JSON.parse(localStorage.getItem('cart') || '[]');
+    if (!cart.length) {
+      alert("Giỏ hàng trống");
+      return;
+    }
+
     const totalAmount = cart.reduce((sum, i) => sum + i.qty * i.price, 0);
     const shippingFee = 30000;
     const discount = 0;
@@ -187,18 +205,19 @@ if (confirmCheckoutBtn) {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${localStorage.getItem('token')}`
+          Authorization: `Bearer ${token}`
         },
         body: JSON.stringify(order)
       });
 
       const result = await res.json();
       if (res.ok) {
-        alert('🎉 Đặt hàng thành công!');
+        alert('✅ Đặt hàng thành công!');
         localStorage.removeItem('cart');
-        window.location.href = '/thankyou.html';
+        window.location.href = 'thankyou.html';
       } else {
-        alert('❌ ' + (result.message || 'Không thể đặt hàng'));
+        alert('❌ ' + (result.message || 'Lỗi đặt hàng'));
+        console.log(result);
       }
     } catch (err) {
       console.error(err);
@@ -206,6 +225,7 @@ if (confirmCheckoutBtn) {
     }
   });
 }
+
 
 // Hiển thị link đăng nhập / đăng ký hoặc tên người dùng
 function renderNavAuthLinks() {
