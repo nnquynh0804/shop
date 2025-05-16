@@ -59,6 +59,11 @@ function increaseQty(index) {
   localStorage.setItem('cart', JSON.stringify(cart));
   renderCart();
 }
+function removeItem(index) {
+  cart.splice(index, 1);
+  localStorage.setItem('cart', JSON.stringify(cart));
+  renderCart();
+}
 
 function decreaseQty(index) {
   if (cart[index].qty > 1) {
