@@ -95,7 +95,7 @@
     fetchAndRender('/products', '#products-table', (p) =>
       createRow([p.name, `${p.price}₫`, p.quantity])
     );
-    fetchAndRender('/orders/all', '#orders-table', (o) =>
+    fetchAndRender('/orders', '#orders-table', (o) =>
       createRow([o.orderCode, o.shippingAddress?.fullName, `${o.finalAmount}₫`, o.orderStatus])
     );
     fetchAndRender('/customers', '#customers-table', (c) =>
