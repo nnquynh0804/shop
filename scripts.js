@@ -50,10 +50,6 @@ function renderCart() {
 }
 
 
-  cartCount.textContent = cart.reduce((sum, item) => sum + item.qty, 0);
-  cartTotal.textContent = total.toLocaleString('vi-VN') + '₫';
-}
-
 function increaseQty(index) {
   cart[index].qty++;
   localStorage.setItem('cart', JSON.stringify(cart));
