@@ -4,7 +4,70 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Đăng nhập</title>
-  <link rel="stylesheet" href="style.css" />
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background: #f5f0eb;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    .login-container {
+      background: #fffaf4;
+      padding: 30px 40px;
+      border-radius: 12px;
+      box-shadow: 0 4px 20px rgba(96, 64, 32, 0.15);
+      width: 100%;
+      max-width: 360px;
+      text-align: center;
+    }
+
+    .login-container h2 {
+      color: #5a3825;
+      margin-bottom: 20px;
+    }
+
+    input[type="email"],
+    input[type="password"] {
+      width: 100%;
+      padding: 12px 14px;
+      margin-bottom: 16px;
+      border: 1px solid #d0b8a8;
+      border-radius: 6px;
+      font-size: 15px;
+      background-color: #fdf8f5;
+    }
+
+    input:focus {
+      outline: none;
+      border-color: #a47148;
+    }
+
+    button {
+      width: 100%;
+      padding: 12px;
+      background-color: #a47148;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-size: 16px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    button:hover {
+      background-color: #8c5a36;
+    }
+
+    #login-error {
+      margin-top: 10px;
+      color: #d94a38;
+      font-size: 14px;
+    }
+  </style>
 </head>
 <body>
   <div class="login-container">
@@ -14,7 +77,7 @@
       <input type="password" id="password" placeholder="Mật khẩu" required />
       <button type="submit">Đăng nhập</button>
     </form>
-    <p id="login-error" style="color: red; margin-top: 10px;"></p>
+    <p id="login-error"></p>
   </div>
 
   <script src="login.js"></script>
