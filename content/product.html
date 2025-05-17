@@ -1,4 +1,9 @@
-<style>
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title>Danh sách sản phẩm</title>
+ <style>
   body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     padding: 40px;
@@ -78,3 +83,65 @@
     text-overflow: ellipsis;
   }
 </style>
+
+</head>
+<body>
+  <h1>📦 Danh sách sản phẩm</h1>
+  <table id="product-table">
+    <thead>
+      <tr>
+        <th>Tên</th>
+        <th>Giá</th>
+        <th>Số lượng</th>
+        <th>Ảnh</th>
+        <th>Mô tả</th>
+        <th>Hành động</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+
+  <script>
+    async function fetchProducts() {
+      try {
+        const res = await fetch('https://backend-7j0i.onrender.com/products');
+        if (!res.ok) throw new Error(Lỗi: ${res.status});
+        const data = await res.json();
+
+        const tbody = document.querySelector('tbody');
+        tbody.innerHTML = '';
+
+        data.forEach(p => {
+          const row = document.createElement('tr');
+          row.innerHTML = 
+            <td>${p.name}</td>
+            <td>${p.price.toLocaleString('vi-VN')}₫</td>
+            <td>${p.quantity || '-'}</td>
+            <td><img src="${p.images.trim()}" alt="${p.name}"></td>
+            <td title="${p.about}">${p.about ? p.about.slice(0, 50) + '...' : ''}</td>
+            <td>
+              <button onclick="editProduct('${p._id}')">Sửa</button>
+              <button onclick="deleteProduct('${p._id}')">Xóa</button>
+            </td>
+          ;
+          tbody.appendChild(row);
+        });
+
+      } catch (err) {
+        console.error('Lỗi khi fetch sản phẩm:', err);
+        alert('Không thể tải danh sách sản phẩm.');
+      }
+    }
+
+    function editProduct(id) {
+      window.location.href = product-edit.html?id=${id};
+    }
+
+    function deleteProduct(id) {
+      alert(Bạn cần cấu hình API xóa cho ID: ${id});
+    }
+
+    fetchProducts();
+  </script>
+</body>
+</html>
