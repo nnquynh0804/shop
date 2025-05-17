@@ -125,12 +125,13 @@
   </table>
 
   <script type="module">
-    let allCustomers = [];
+    // Dùng biến toàn cục tránh bị khai báo lại khi load nhiều lần
+    window.allCustomers = window.allCustomers || [];
 
     async function fetchCustomers() {
       try {
         const res = await fetch('https://backend-7j0i.onrender.com/customers', {
-          headers: { Authorization: `Bearer ${token}` }
+          headers: { Authorization: `Bearer ${window.token}` }
         });
 
         if (!res.ok) {
@@ -140,8 +141,8 @@
           return;
         }
 
-        allCustomers = await res.json();
-        render(allCustomers);
+        window.allCustomers = await res.json();
+        render(window.allCustomers);
       } catch (err) {
         console.error('Fetch error:', err);
         alert('⚠️ Không thể tải danh sách khách hàng.');
@@ -181,7 +182,7 @@
 
       searchInput.addEventListener('input', (e) => {
         const value = e.target.value.toLowerCase();
-        const filtered = allCustomers.filter(c =>
+        const filtered = window.allCustomers.filter(c =>
           (c.fullName || '').toLowerCase().includes(value) ||
           (c.email || '').toLowerCase().includes(value)
         );
