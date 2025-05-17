@@ -4,11 +4,31 @@
   <meta charset="UTF-8">
   <title>Danh sách sản phẩm</title>
   <style>
-    body { font-family: Arial, sans-serif; padding: 20px; }
-    table { border-collapse: collapse; width: 100%; margin-top: 20px; }
-    th, td { border: 1px solid #ccc; padding: 8px; }
-    th { background-color: #f0f0f0; }
-    button { margin-right: 5px; }
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+    }
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      margin-top: 20px;
+    }
+    th, td {
+      border: 1px solid #ccc;
+      padding: 8px;
+      vertical-align: top;
+    }
+    th {
+      background-color: #f0f0f0;
+    }
+    img {
+      max-width: 100%;
+      height: auto;
+    }
+    button {
+      margin-right: 5px;
+      padding: 4px 8px;
+    }
   </style>
 </head>
 <body>
@@ -20,6 +40,7 @@
         <th>Giá</th>
         <th>Số lượng</th>
         <th>Ảnh</th>
+        <th>Mô tả</th>
         <th>Hành động</th>
       </tr>
     </thead>
@@ -27,40 +48,46 @@
   </table>
 
   <script>
-    const token = localStorage.getItem('token');
     async function fetchProducts() {
-      const res = await fetch('https://backend-7j0i.onrender.com/products', {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      const data = await res.json();
-      const tbody = document.querySelector('tbody');
-      data.forEach(p => {
-        const row = document.createElement('tr');
-        row.innerHTML = `
-          <td>${p.name}</td>
-          <td>${p.price}</td>
-          <td>${p.quantity}</td>
-          <td><img src="${p.images}" width="50"></td>
-          <td>
-            <button onclick="editProduct('${p._id}')">Sửa</button>
-            <button onclick="deleteProduct('${p._id}')">Xóa</button>
-          </td>
-        `;
-        tbody.appendChild(row);
-      });
+      try {
+        const res = await fetch('https://backend-7j0i.onrender.com/products');
+
+        if (!res.ok) {
+          throw new Error(`Lỗi: ${res.status}`);
+        }
+
+        const data = await res.json();
+        const tbody = document.querySelector('tbody');
+        tbody.innerHTML = '';
+
+        data.forEach(p => {
+          const row = document.createElement('tr');
+          row.innerHTML = `
+            <td>${p.name}</td>
+            <td>${p.price.toLocaleString('vi-VN')}₫</td>
+            <td>${p.quantity || '-'}</td>
+            <td><img src="${p.images.trim()}" width="50"></td>
+            <td title="${p.about}">${p.about ? p.about.slice(0, 50) + '...' : ''}</td>
+            <td>
+              <button onclick="editProduct('${p._id}')">Sửa</button>
+              <button onclick="deleteProduct('${p._id}')">Xóa</button>
+            </td>
+          `;
+          tbody.appendChild(row);
+        });
+
+      } catch (err) {
+        console.error('Lỗi khi fetch sản phẩm:', err);
+        alert('Không thể tải danh sách sản phẩm.');
+      }
     }
 
     function editProduct(id) {
       window.location.href = `product-edit.html?id=${id}`;
     }
 
-    async function deleteProduct(id) {
-      if (!confirm('Bạn có chắc chắn xóa?')) return;
-      await fetch(`https://backend-7j0i.onrender.com/products/${id}`, {
-        method: 'DELETE',
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      location.reload();
+    function deleteProduct(id) {
+      alert(`Bạn cần cấu hình API xóa cho ID: ${id}`);
     }
 
     fetchProducts();
