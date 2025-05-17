@@ -1,189 +1,22 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <title>Admin Dashboard</title>
-  <style>
-    body {
-      font-family: 'Segoe UI', sans-serif;
-      margin: 0;
-      display: flex;
-      height: 100vh;
-      background-color: #f5f3ef;
-      color: #4e342e;
-    }
-
-    .sidebar {
-      width: 250px;
-      background-color: #795548; /* màu nâu đậm */
-      color: #fff;
-      padding: 20px;
-      box-sizing: border-box;
-    }
-
-    .sidebar h2 {
-      font-size: 20px;
-      margin-bottom: 10px;
-    }
-
-    .sidebar p {
-      font-size: 14px;
-      margin-bottom: 20px;
-    }
-
-    .sidebar hr {
-      border: 0;
-      height: 1px;
-      background-color: #a1887f;
-      margin: 15px 0;
-    }
-
-    .sidebar h3 {
-      font-size: 16px;
-      margin: 20px 0 10px;
-    }
-
-    .sidebar button {
-      display: block;
-      width: 100%;
-      margin: 6px 0;
-      padding: 10px 12px;
-      background-color: #a1887f; /* màu cà phê sữa */
-      border: none;
-      border-radius: 5px;
-      color: #fff;
-      text-align: left;
-      cursor: pointer;
-      transition: background-color 0.2s;
-    }
-
-    .sidebar button:hover {
-      background-color: #d7ccc8;
-      color: #4e342e;
-    }
-
-    .content {
-      flex: 1;
-      padding: 30px;
-      box-sizing: border-box;
-      overflow-y: auto;
-    }
-
-    .hidden {
-      display: none;
-    }
-
-    a {
-      color: #ffccbc;
-      text-decoration: none;
-    }
-
-    a:hover {
-      text-decoration: underline;
-    }
-
-    .content h1, .content h2 {
-      color: #5d4037;
-    }
-
-    .section {
-      background-color: #fffaf4;
-      padding: 20px;
-      border-radius: 8px;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.08);
-      margin-bottom: 20px;
-    }
-  </style>
+  <link rel="stylesheet" href="style-admin.css" />
 </head>
 <body>
-
-  <div class="sidebar">
-    <h2>👩‍💼 Admin</h2>
-    <p>Xin chào, <span id="admin-name">Admin</span> | <a href="#" onclick="logout()">Đăng xuất</a></p>
-    <hr>
-
-    <h3>📦 Quản lý Hàng hóa</h3>
-    <button onclick="showSection('products')">Danh sách sản phẩm</button>
-    <button onclick="showSection('addProduct')">Thêm sản phẩm</button>
-    <button onclick="showSection('editProduct')">Chỉnh sửa sản phẩm</button>
-
-    <h3>🧾 Đơn hàng</h3>
-    <button onclick="showSection('orders')">Danh sách đơn hàng</button>
-    <button onclick="showSection('editOrder')">Chỉnh sửa đơn hàng</button>
-
-    <h3>👤 Khách hàng</h3>
-    <button onclick="showSection('customers')">Danh sách khách hàng</button>
-    <button onclick="showSection('editCustomer')">Chỉnh sửa khách hàng</button>
+  <!-- Sidebar -->
+  <div class="sidebar" id="sidebar-container">
+    <!-- sidebar sẽ được load từ sidebar.html -->
   </div>
 
-  <div class="content">
-    <div id="products" class="section hidden">
-      <h2>📦 Danh sách sản phẩm</h2>
-      <p>Hiển thị danh sách sản phẩm tại đây...</p>
-    </div>
-
-    <div id="addProduct" class="section hidden">
-      <h2>➕ Thêm sản phẩm</h2>
-      <p>Biểu mẫu thêm sản phẩm mới...</p>
-    </div>
-
-    <div id="editProduct" class="section hidden">
-      <h2>🛠️ Chỉnh sửa sản phẩm</h2>
-      <p>Giao diện chỉnh sửa sản phẩm...</p>
-    </div>
-
-    <div id="orders" class="section hidden">
-      <h2>🧾 Danh sách đơn hàng</h2>
-      <p>Hiển thị đơn hàng và trạng thái...</p>
-    </div>
-
-    <div id="editOrder" class="section hidden">
-      <h2>✏️ Chỉnh sửa đơn hàng</h2>
-      <p>Chỉnh sửa thông tin đơn hàng...</p>
-    </div>
-
-    <div id="customers" class="section hidden">
-      <h2>👥 Danh sách khách hàng</h2>
-      <p>Tìm kiếm và hiển thị danh sách khách hàng...</p>
-    </div>
-
-    <div id="editCustomer" class="section hidden">
-      <h2>🛠️ Chỉnh sửa khách hàng</h2>
-      <p>Chỉnh sửa thông tin khách hàng...</p>
-    </div>
-
-    <div id="welcome" class="section">
-      <h1>Chào mừng đến Admin Dashboard</h1>
-      <p>Chọn một mục từ thanh điều hướng để bắt đầu.</p>
-    </div>
+  <!-- Nội dung chính -->
+  <div class="main-content" id="main-content">
+    <h2>Chào mừng đến trang quản trị!</h2>
+    <p>Chọn một mục từ thanh điều hướng bên trái.</p>
   </div>
 
-  <script>
-    const role = localStorage.getItem('role');
-    const adminName = localStorage.getItem('userName') || 'Admin';
-
-    if (role !== 'admin') {
-      alert('Bạn không có quyền truy cập');
-      window.location.href = '/index.html';
-    }
-
-    document.getElementById('admin-name').textContent = adminName;
-
-    function logout() {
-      localStorage.clear();
-      window.location.href = '/login.html';
-    }
-
-    function showSection(sectionId) {
-      const sections = document.querySelectorAll('.section');
-      sections.forEach(section => section.classList.add('hidden'));
-
-      document.getElementById('welcome').style.display = 'none';
-
-      const target = document.getElementById(sectionId);
-      if (target) target.classList.remove('hidden');
-    }
-  </script>
-
+  <script src="script-admin.js"></script>
 </body>
 </html>
