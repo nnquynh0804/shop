@@ -1,4 +1,6 @@
 // Load sidebar từ file riêng
+window.token = localStorage.getItem('token');
+
 fetch('sidebar.html')
   .then(res => res.text())
   .then(html => {
