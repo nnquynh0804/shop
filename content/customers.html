@@ -22,27 +22,46 @@
     <tbody id="customers"></tbody>
   </table>
 
-  <script>
+  <script type="module">
     const token = localStorage.getItem('token');
     let allCustomers = [];
 
     async function fetchCustomers() {
-      const res = await fetch('https://backend-7j0i.onrender.com/customers', {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      allCustomers = await res.json();
-      render(allCustomers);
+      try {
+        const res = await fetch('https://backend-7j0i.onrender.com/customers', {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+
+        if (!res.ok) {
+          const errText = await res.text();
+          console.error('Lỗi API:', errText);
+          alert(`Lỗi khi tải khách hàng: ${res.status}`);
+          return;
+        }
+
+        allCustomers = await res.json();
+        render(allCustomers);
+      } catch (err) {
+        console.error('Fetch error:', err);
+        alert('Không thể tải danh sách khách hàng.');
+      }
     }
 
     function render(data) {
       const tbody = document.getElementById('customers');
       tbody.innerHTML = '';
+
+      if (data.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="4">Không tìm thấy khách hàng.</td></tr>';
+        return;
+      }
+
       data.forEach(c => {
         const tr = document.createElement('tr');
         tr.innerHTML = `
           <td>${c.email}</td>
-          <td>${c.fullName}</td>
-          <td>${c.phone}</td>
+          <td>${c.fullName || ''}</td>
+          <td>${c.phone || ''}</td>
           <td><button onclick="edit('${c._id}')">Sửa</button></td>
         `;
         tbody.appendChild(tr);
@@ -53,15 +72,24 @@
       window.location.href = `customer-edit.html?id=${id}`;
     }
 
-    document.getElementById('search').addEventListener('input', (e) => {
-      const value = e.target.value.toLowerCase();
-      const filtered = allCustomers.filter(c =>
-        c.fullName.toLowerCase().includes(value) || c.email.toLowerCase().includes(value)
-      );
-      render(filtered);
-    });
+    function initCustomerPage() {
+      const searchInput = document.getElementById('search');
+      if (!searchInput) return;
 
-    fetchCustomers();
+      searchInput.addEventListener('input', (e) => {
+        const value = e.target.value.toLowerCase();
+        const filtered = allCustomers.filter(c =>
+          (c.fullName || '').toLowerCase().includes(value) ||
+          (c.email || '').toLowerCase().includes(value)
+        );
+        render(filtered);
+      });
+
+      fetchCustomers();
+    }
+
+    // Gọi khi nội dung DOM của trang customer đã sẵn sàng
+    initCustomerPage();
   </script>
 </body>
 </html>
