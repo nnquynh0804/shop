@@ -122,21 +122,38 @@
       <p>Chọn một mục từ thanh điều hướng để bắt đầu.</p>
     </div>
   </div>
-  <script>
-    const role = localStorage.getItem('role');
-    const adminName = localStorage.getItem('userName') || 'Admin';
+ <script>
+  const role = localStorage.getItem('role');
+  const adminName = localStorage.getItem('userName') || 'Admin';
 
-    if (role !== 'admin') {
-      alert('Bạn không có quyền truy cập');
-      window.location.href = '/index.html';
-    }
+  if (role !== 'admin') {
+    alert('Bạn không có quyền truy cập');
+    window.location.href = '/index.html';
+  }
 
-    document.getElementById('admin-name').textContent = adminName;
+  document.getElementById('admin-name').textContent = adminName;
 
-    function logout() {
-      localStorage.clear();
-      window.location.href = '/login.html';
-    }
-  </script>
+  function logout() {
+    localStorage.clear();
+    window.location.href = '/login.html';
+  }
+
+  function showSection(sectionId) {
+    // Ẩn tất cả các section
+    const sections = document.querySelectorAll('.section');
+    sections.forEach(section => {
+      section.classList.add('hidden');
+    });
+
+    // Ẩn cả phần welcome nếu đang hiện
+    const welcome = document.getElementById('welcome');
+    if (welcome) welcome.style.display = 'none';
+
+    // Hiện section được chọn
+    const target = document.getElementById(sectionId);
+    if (target) target.classList.remove('hidden');
+  }
+</script>
+
 </body>
 </html>
