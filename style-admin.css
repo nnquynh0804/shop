@@ -42,7 +42,7 @@ body {
 }
 
 .main-content {
-  margin-left: 220px; /* TRÁNH BỊ ĐÈ BỞI SIDEBAR */
+  margin-left: 270px; /* TRÁNH BỊ ĐÈ BỞI SIDEBAR */
   padding: 30px;
   flex-grow: 1;
 }
