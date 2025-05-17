@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title>Thêm sản phẩm</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 20px; max-width: 500px; margin: auto; }
+    input, textarea { width: 100%; padding: 8px; margin: 8px 0; }
+    button { padding: 10px 20px; }
+  </style>
+</head>
+<body>
+  <h1>➕ Thêm sản phẩm mới</h1>
+  <form id="product-form">
+    <label>Tên sản phẩm</label>
+    <input type="text" id="name" required>
+
+    <label>Giá</label>
+    <input type="number" id="price" required>
+
+    <label>Số lượng</label>
+    <input type="number" id="quantity" required>
+
+    <label>Tên ảnh minh họa</label>
+    <input type="text" id="images" placeholder="abc.jpg">
+
+    <button type="submit">Thêm</button>
+  </form>
+
+  <script>
+    const token = localStorage.getItem('token');
+    document.getElementById('product-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const name = document.getElementById('name').value;
+      const price = document.getElementById('price').value;
+      const quantity = document.getElementById('quantity').value;
+      const images = document.getElementById('images').value;
+
+      const res = await fetch('https://backend-7j0i.onrender.com/products', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify({ name, price, quantity, images })
+      });
+
+      const result = await res.json();
+      if (res.ok) {
+        alert('✅ Thêm sản phẩm thành công!');
+        window.location.href = 'products.html';
+      } else {
+        alert('❌ Lỗi: ' + (result.message || 'Không thêm được sản phẩm'));
+      }
+    });
+  </script>
+</body>
+</html>

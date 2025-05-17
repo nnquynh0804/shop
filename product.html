@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title>Danh sách sản phẩm</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 20px; }
+    table { border-collapse: collapse; width: 100%; margin-top: 20px; }
+    th, td { border: 1px solid #ccc; padding: 8px; }
+    th { background-color: #f0f0f0; }
+    button { margin-right: 5px; }
+  </style>
+</head>
+<body>
+  <h1>📦 Danh sách sản phẩm</h1>
+  <table id="product-table">
+    <thead>
+      <tr>
+        <th>Tên</th>
+        <th>Giá</th>
+        <th>Số lượng</th>
+        <th>Ảnh</th>
+        <th>Hành động</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+
+  <script>
+    const token = localStorage.getItem('token');
+    async function fetchProducts() {
+      const res = await fetch('https://backend-7j0i.onrender.com/products', {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      const data = await res.json();
+      const tbody = document.querySelector('tbody');
+      data.forEach(p => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td>${p.name}</td>
+          <td>${p.price}</td>
+          <td>${p.quantity}</td>
+          <td><img src="${p.images}" width="50"></td>
+          <td>
+            <button onclick="editProduct('${p._id}')">Sửa</button>
+            <button onclick="deleteProduct('${p._id}')">Xóa</button>
+          </td>
+        `;
+        tbody.appendChild(row);
+      });
+    }
+
+    function editProduct(id) {
+      window.location.href = `product-edit.html?id=${id}`;
+    }
+
+    async function deleteProduct(id) {
+      if (!confirm('Bạn có chắc chắn xóa?')) return;
+      await fetch(`https://backend-7j0i.onrender.com/products/${id}`, {
+        method: 'DELETE',
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      location.reload();
+    }
+
+    fetchProducts();
+  </script>
+</body>
+</html>

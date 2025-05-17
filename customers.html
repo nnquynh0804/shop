@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title>Danh sách khách hàng</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 20px; }
+    input { padding: 8px; margin-bottom: 10px; width: 300px; }
+    table { border-collapse: collapse; width: 100%; }
+    th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
+    th { background-color: #eee; }
+  </style>
+</head>
+<body>
+  <h1>👤 Danh sách khách hàng</h1>
+  <input type="text" id="search" placeholder="Tìm theo tên hoặc email...">
+
+  <table>
+    <thead>
+      <tr><th>Email</th><th>Họ tên</th><th>SĐT</th><th>Hành động</th></tr>
+    </thead>
+    <tbody id="customers"></tbody>
+  </table>
+
+  <script>
+    const token = localStorage.getItem('token');
+    let allCustomers = [];
+
+    async function fetchCustomers() {
+      const res = await fetch('https://backend-7j0i.onrender.com/customers', {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      allCustomers = await res.json();
+      render(allCustomers);
+    }
+
+    function render(data) {
+      const tbody = document.getElementById('customers');
+      tbody.innerHTML = '';
+      data.forEach(c => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>${c.email}</td>
+          <td>${c.fullName}</td>
+          <td>${c.phone}</td>
+          <td><button onclick="edit('${c._id}')">Sửa</button></td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function edit(id) {
+      window.location.href = `customer-edit.html?id=${id}`;
+    }
+
+    document.getElementById('search').addEventListener('input', (e) => {
+      const value = e.target.value.toLowerCase();
+      const filtered = allCustomers.filter(c =>
+        c.fullName.toLowerCase().includes(value) || c.email.toLowerCase().includes(value)
+      );
+      render(filtered);
+    });
+
+    fetchCustomers();
+  </script>
+</body>
+</html>
