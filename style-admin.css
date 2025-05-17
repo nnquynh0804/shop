@@ -6,14 +6,18 @@ body {
 }
 
 .sidebar {
+  position: fixed; /* GIỮ CỐ ĐỊNH */
+  top: 0;
+  left: 0;
   width: 220px;
+  height: 100vh;
   background-color: #6b4f3b; /* nâu đậm */
   color: white;
   padding: 20px;
-  height: 100vh;
   box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+  overflow-y: auto; /* Cuộn nếu quá dài */
+  z-index: 1000;
 }
-
 .sidebar h2 {
   color: #f7e9dc;
   font-size: 20px;
@@ -38,6 +42,7 @@ body {
 }
 
 .main-content {
-  flex-grow: 1;
+  margin-left: 220px; /* TRÁNH BỊ ĐÈ BỞI SIDEBAR */
   padding: 30px;
+  flex-grow: 1;
 }
