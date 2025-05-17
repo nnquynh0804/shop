@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title>Chỉnh sửa khách hàng</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 20px; max-width: 500px; margin: auto; }
+    input { width: 100%; padding: 10px; margin: 10px 0; }
+    label { font-weight: bold; display: block; }
+    button { padding: 10px 20px; margin-top: 15px; }
+  </style>
+</head>
+<body>
+  <h1>✏️ Chỉnh sửa khách hàng</h1>
+  <form id="edit-form">
+    <label>Email</label>
+    <input type="email" id="email" disabled>
+
+    <label>Họ tên</label>
+    <input type="text" id="fullName">
+
+    <label>Số điện thoại</label>
+    <input type="text" id="phone">
+
+    <label>Địa chỉ</label>
+    <input type="text" id="address">
+
+    <button type="submit">Cập nhật</button>
+  </form>
+
+  <script>
+    const token = localStorage.getItem('token');
+    const id = new URLSearchParams(window.location.search).get('id');
+
+    async function fetchCustomer() {
+      const res = await fetch(`https://backend-7j0i.onrender.com/customers/${id}`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      const c = await res.json();
+      document.getElementById('email').value = c.email;
+      document.getElementById('fullName').value = c.fullName;
+      document.getElementById('phone').value = c.phone;
+      document.getElementById('address').value = c.address;
+    }
+
+    document.getElementById('edit-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const updated = {
+        fullName: document.getElementById('fullName').value,
+        phone: document.getElementById('phone').value,
+        address: document.getElementById('address').value
+      };
+      await fetch(`https://backend-7j0i.onrender.com/customers/${id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify(updated)
+      });
+      alert('✅ Đã cập nhật khách hàng!');
+      window.location.href = 'customers.html';
+    });
+
+    fetchCustomer();
+  </script>
+</body>
+</html>
