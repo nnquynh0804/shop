@@ -4,63 +4,133 @@
   <meta charset="UTF-8">
   <title>Chỉnh sửa đơn hàng</title>
   <style>
-    body { font-family: Arial, sans-serif; padding: 20px; max-width: 600px; margin: auto; }
-    input, select { width: 100%; padding: 8px; margin: 10px 0; }
-    label { font-weight: bold; display: block; margin-top: 10px; }
-    button { padding: 10px 20px; }
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #f9f6f3;
+      color: #4a2e20;
+      max-width: 600px;
+      margin: 50px auto;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 6px 18px rgba(80, 60, 40, 0.15);
+      background: #fffdfb;
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 30px;
+      color: #5a3928;
+    }
+
+    label {
+      font-weight: 600;
+      margin-bottom: 6px;
+      display: block;
+      color: #6b4227;
+    }
+
+    input[type="text"],
+    input[type="number"],
+    select {
+      width: 100%;
+      padding: 12px;
+      margin-bottom: 18px;
+      border: 1px solid #c2b3a0;
+      border-radius: 8px;
+      font-size: 16px;
+      background-color: #fff7f0;
+      transition: border 0.2s ease-in-out;
+    }
+
+    input:disabled {
+      background-color: #f2e7dc;
+      color: #5a4a3b;
+    }
+
+    select {
+      background-color: #fff;
+    }
+
+    button {
+      background-color: #8b5e3c;
+      color: #fff;
+      border: none;
+      padding: 12px 24px;
+      font-size: 16px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background-color 0.2s ease;
+      width: 100%;
+    }
+
+    button:hover {
+      background-color: #70482b;
+    }
   </style>
 </head>
 <body>
   <h1>✏️ Chỉnh sửa đơn hàng</h1>
+
   <form id="edit-order-form">
-    <label>Mã đơn hàng</label>
+    <label for="orderCode">Mã đơn hàng</label>
     <input type="text" id="orderCode" disabled>
 
-    <label>Họ tên khách hàng</label>
+    <label for="fullName">Họ tên khách hàng</label>
     <input type="text" id="fullName" disabled>
 
-    <label>Số tiền</label>
+    <label for="finalAmount">Số tiền</label>
     <input type="number" id="finalAmount" disabled>
 
-    <label>Trạng thái đơn hàng</label>
+    <label for="orderStatus">Trạng thái đơn hàng</label>
     <select id="orderStatus">
-      <option value="PENDING">PENDING</option>
-      <option value="CONFIRMED">CONFIRMED</option>
-      <option value="SHIPPED">SHIPPED</option>
-      <option value="CANCELLED">CANCELLED</option>
+      <option value="PENDING">PENDING - Đang chờ</option>
+      <option value="CONFIRMED">CONFIRMED - Đã xác nhận</option>
+      <option value="SHIPPED">SHIPPED - Đã giao</option>
+      <option value="CANCELLED">CANCELLED - Đã hủy</option>
     </select>
 
-    <button type="submit">Cập nhật</button>
+    <button type="submit">💾 Cập nhật</button>
   </form>
 
   <script>
-   
     const id = new URLSearchParams(window.location.search).get('id');
 
     async function fetchOrder() {
-      const res = await fetch(`https://backend-7j0i.onrender.com/orders/${id}`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      const o = await res.json();
-      document.getElementById('orderCode').value = o.orderCode;
-      document.getElementById('fullName').value = o.shippingAddress?.fullName;
-      document.getElementById('finalAmount').value = o.finalAmount;
-      document.getElementById('orderStatus').value = o.orderStatus;
+      try {
+        const res = await fetch(`https://backend-7j0i.onrender.com/orders/${id}`, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        const o = await res.json();
+        document.getElementById('orderCode').value = o.orderCode;
+        document.getElementById('fullName').value = o.shippingAddress?.fullName;
+        document.getElementById('finalAmount').value = o.finalAmount;
+        document.getElementById('orderStatus').value = o.orderStatus;
+      } catch (err) {
+        alert('❌ Không thể tải dữ liệu đơn hàng');
+        console.error(err);
+      }
     }
 
     document.getElementById('edit-order-form').addEventListener('submit', async (e) => {
       e.preventDefault();
       const status = document.getElementById('orderStatus').value;
-      await fetch(`https://backend-7j0i.onrender.com/orders/${id}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`
-        },
-        body: JSON.stringify({ orderStatus: status })
-      });
-      alert('✅ Cập nhật trạng thái thành công');
-      window.location.href = 'orders.html';
+
+      try {
+        await fetch(`https://backend-7j0i.onrender.com/orders/${id}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`
+          },
+          body: JSON.stringify({ orderStatus: status })
+        });
+
+        alert('✅ Cập nhật trạng thái thành công');
+        window.location.href = 'orders.html';
+      } catch (err) {
+        alert('❌ Cập nhật thất bại');
+        console.error(err);
+      }
     });
 
     fetchOrder();
