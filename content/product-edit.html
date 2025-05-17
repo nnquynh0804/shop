@@ -4,16 +4,100 @@
   <meta charset="UTF-8">
   <title>Chỉnh sửa sản phẩm</title>
   <style>
-    body { font-family: Arial, sans-serif; padding: 20px; max-width: 600px; margin: auto; }
-    input, textarea { width: 100%; padding: 8px; margin: 8px 0; }
-    button { padding: 10px 20px; }
-    .drop-area { border: 2px dashed #aaa; padding: 20px; text-align: center; margin-top: 10px; }
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #fdfaf6;
+      margin: 0;
+      padding: 40px 20px;
+      display: flex;
+      justify-content: center;
+    }
+
+    form {
+      background: white;
+      padding: 30px;
+      border-radius: 10px;
+      max-width: 500px;
+      width: 100%;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    }
+
+    h1 {
+      text-align: center;
+      color: #6b4f3b;
+    }
+
+    label {
+      display: block;
+      margin-top: 15px;
+      font-weight: bold;
+      color: #333;
+    }
+
+    input[type="text"],
+    input[type="number"] {
+      width: 100%;
+      padding: 10px;
+      margin-top: 5px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      font-size: 16px;
+    }
+
+    .drop-area {
+      border: 2px dashed #bbb;
+      padding: 20px;
+      text-align: center;
+      margin-top: 15px;
+      border-radius: 8px;
+      background-color: #fffaf2;
+      color: #888;
+    }
+
+    .drop-area.hover {
+      background-color: #f0e8de;
+      border-color: #999;
+    }
+
+    #preview {
+      margin-top: 15px;
+      max-width: 100%;
+      height: auto;
+      display: none;
+      border: 1px solid #ccc;
+      padding: 4px;
+      border-radius: 4px;
+    }
+
+    button {
+      margin-top: 25px;
+      padding: 12px 20px;
+      background-color: #6b4f3b;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-size: 16px;
+      width: 100%;
+      cursor: pointer;
+      transition: background-color 0.2s ease;
+    }
+
+    button:hover {
+      background-color: #8d6e57;
+    }
+
+    @media (max-width: 600px) {
+      body {
+        padding: 20px 10px;
+      }
+    }
   </style>
 </head>
 <body>
-  <h1>✏️ Chỉnh sửa sản phẩm</h1>
   <form id="edit-form">
-    <label>Tên</label>
+    <h1>✏️ Chỉnh sửa sản phẩm</h1>
+
+    <label>Tên sản phẩm</label>
     <input type="text" id="name" required>
 
     <label>Giá</label>
@@ -22,23 +106,22 @@
     <label>Số lượng</label>
     <input type="number" id="quantity" required>
 
-    <label>Tên ảnh minh họa</label>
-    <input type="text" id="images" required>
+    <label>Ảnh minh họa (dán link hoặc kéo ảnh vào)</label>
+    <input type="text" id="images" placeholder="https://..." required>
 
-    <div class="drop-area" id="drop-area">Kéo ảnh mới vào đây để thay đổi ảnh sản phẩm</div>
-    <p id="preview-name"></p>
+    <div class="drop-area" id="drop-area">📥 Kéo ảnh mới vào đây</div>
+    <img id="preview" alt="Xem trước ảnh">
 
-    <button type="submit">Cập nhật</button>
+    <button type="submit">💾 Cập nhật sản phẩm</button>
   </form>
 
   <script>
-    
     const id = new URLSearchParams(window.location.search).get('id');
     const nameInput = document.getElementById('name');
     const priceInput = document.getElementById('price');
     const quantityInput = document.getElementById('quantity');
     const imagesInput = document.getElementById('images');
-    const previewName = document.getElementById('preview-name');
+    const preview = document.getElementById('preview');
 
     async function fetchData() {
       const res = await fetch(`https://backend-7j0i.onrender.com/products/${id}`, {
@@ -49,6 +132,8 @@
       priceInput.value = p.price;
       quantityInput.value = p.quantity;
       imagesInput.value = p.images;
+      preview.src = p.images;
+      preview.style.display = 'block';
     }
 
     document.getElementById('edit-form').addEventListener('submit', async (e) => {
@@ -77,16 +162,39 @@
       }
     });
 
-    // Xử lý kéo thả
+    // Drag and drop ảnh
     const dropArea = document.getElementById("drop-area");
-    dropArea.addEventListener("dragover", (e) => e.preventDefault());
+
+    dropArea.addEventListener("dragover", (e) => {
+      e.preventDefault();
+      dropArea.classList.add('hover');
+    });
+
+    dropArea.addEventListener("dragleave", () => {
+      dropArea.classList.remove('hover');
+    });
+
     dropArea.addEventListener("drop", (e) => {
       e.preventDefault();
+      dropArea.classList.remove('hover');
+
       const file = e.dataTransfer.files[0];
-      if (file) {
-        imagesInput.value = file.name;
-        previewName.textContent = `📎 Đã chọn ảnh: ${file.name}`;
+      if (file && file.type.startsWith('image/')) {
+        const reader = new FileReader();
+        reader.onload = function (event) {
+          imagesInput.value = event.target.result;
+          preview.src = event.target.result;
+          preview.style.display = 'block';
+        };
+        reader.readAsDataURL(file);
+      } else {
+        alert('❗ Vui lòng chọn tệp ảnh hợp lệ');
       }
+    });
+
+    imagesInput.addEventListener('input', () => {
+      preview.src = imagesInput.value;
+      preview.style.display = imagesInput.value ? 'block' : 'none';
     });
 
     fetchData();
