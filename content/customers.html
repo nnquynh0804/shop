@@ -4,20 +4,119 @@
   <meta charset="UTF-8">
   <title>Danh sách khách hàng</title>
   <style>
-    body { font-family: Arial, sans-serif; padding: 20px; }
-    input { padding: 8px; margin-bottom: 10px; width: 300px; }
-    table { border-collapse: collapse; width: 100%; }
-    th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
-    th { background-color: #eee; }
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #f4f6f9;
+      padding: 40px;
+      max-width: 900px;
+      margin: auto;
+    }
+
+    h1 {
+      text-align: center;
+      color: #333;
+      margin-bottom: 30px;
+    }
+
+    input[type="text"] {
+      padding: 12px;
+      margin-bottom: 20px;
+      width: 100%;
+      max-width: 400px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      font-size: 16px;
+      display: block;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      background-color: white;
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+    }
+
+    th, td {
+      padding: 14px;
+      text-align: left;
+    }
+
+    th {
+      background-color: #007BFF;
+      color: white;
+    }
+
+    tr:nth-child(even) {
+      background-color: #f9f9f9;
+    }
+
+    tr:hover {
+      background-color: #eef4ff;
+    }
+
+    button {
+      background-color: #28a745;
+      color: white;
+      border: none;
+      padding: 8px 14px;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background-color 0.2s ease;
+    }
+
+    button:hover {
+      background-color: #218838;
+    }
+
+    @media (max-width: 600px) {
+      body { padding: 20px; }
+      table, thead, tbody, th, td, tr {
+        display: block;
+      }
+
+      tr {
+        margin-bottom: 15px;
+      }
+
+      td, th {
+        text-align: right;
+        padding-left: 50%;
+        position: relative;
+      }
+
+      td::before, th::before {
+        content: attr(data-label);
+        position: absolute;
+        left: 15px;
+        width: 45%;
+        padding-left: 10px;
+        font-weight: bold;
+        text-align: left;
+      }
+
+      th {
+        background-color: #007BFF;
+        color: white;
+      }
+    }
   </style>
 </head>
 <body>
   <h1>👤 Danh sách khách hàng</h1>
-  <input type="text" id="search" placeholder="Tìm theo tên hoặc email...">
+  <input type="text" id="search" placeholder="🔍 Tìm theo tên hoặc email...">
 
   <table>
     <thead>
-      <tr><th>Email</th><th>Họ tên</th><th>SĐT</th><th>Hành động</th></tr>
+      <tr>
+        <th>Email</th>
+        <th>Họ tên</th>
+        <th>SĐT</th>
+        <th>Hành động</th>
+      </tr>
     </thead>
     <tbody id="customers"></tbody>
   </table>
@@ -34,7 +133,7 @@
         if (!res.ok) {
           const errText = await res.text();
           console.error('Lỗi API:', errText);
-          alert(`Lỗi khi tải khách hàng: ${res.status}`);
+          alert(`❌ Lỗi khi tải khách hàng: ${res.status}`);
           return;
         }
 
@@ -42,7 +141,7 @@
         render(allCustomers);
       } catch (err) {
         console.error('Fetch error:', err);
-        alert('Không thể tải danh sách khách hàng.');
+        alert('⚠️ Không thể tải danh sách khách hàng.');
       }
     }
 
@@ -51,17 +150,19 @@
       tbody.innerHTML = '';
 
       if (data.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="4">Không tìm thấy khách hàng.</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;">Không tìm thấy khách hàng nào.</td></tr>';
         return;
       }
 
       data.forEach(c => {
         const tr = document.createElement('tr');
         tr.innerHTML = `
-          <td>${c.email}</td>
-          <td>${c.fullName || ''}</td>
-          <td>${c.phone || ''}</td>
-          <td><button onclick="edit('${c._id}')">Sửa</button></td>
+          <td data-label="Email">${c.email}</td>
+          <td data-label="Họ tên">${c.fullName || ''}</td>
+          <td data-label="SĐT">${c.phone || ''}</td>
+          <td data-label="Hành động">
+            <button onclick="edit('${c._id}')">✏️ Sửa</button>
+          </td>
         `;
         tbody.appendChild(tr);
       });
@@ -87,7 +188,6 @@
       fetchCustomers();
     }
 
-    // Gọi khi nội dung DOM của trang customer đã sẵn sàng
     initCustomerPage();
   </script>
 </body>
