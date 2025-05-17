@@ -4,39 +4,124 @@
   <meta charset="UTF-8">
   <title>Admin Dashboard</title>
   <style>
-    body { font-family: Arial, sans-serif; padding: 20px; }
-    h2 { margin-top: 40px; }
-    table { border-collapse: collapse; width: 100%; margin-top: 10px; }
-    th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
-    th { background-color: #f5f5f5; }
-    .section { margin-bottom: 40px; }
-    button { margin-right: 5px; }
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      display: flex;
+      height: 100vh;
+    }
+
+    .sidebar {
+      width: 250px;
+      background-color: #2c3e50;
+      color: white;
+      padding: 20px;
+      box-sizing: border-box;
+    }
+
+    .sidebar h2 {
+      font-size: 18px;
+      margin-bottom: 15px;
+    }
+
+    .sidebar button {
+      display: block;
+      width: 100%;
+      margin: 10px 0;
+      padding: 10px;
+      background-color: #34495e;
+      border: none;
+      color: white;
+      text-align: left;
+      cursor: pointer;
+    }
+
+    .sidebar button:hover {
+      background-color: #1abc9c;
+    }
+
+    .content {
+      flex: 1;
+      padding: 20px;
+      box-sizing: border-box;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    a {
+      color: #3498db;
+      text-decoration: none;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
   </style>
 </head>
 <body>
 
-  <h1>👩‍💼 Admin Dashboard</h1>
-  <p>Xin chào, <span id="admin-name">Admin</span> | <a href="#" onclick="logout()">Đăng xuất</a></p>
+  <div class="sidebar">
+    <h2>👩‍💼 Admin</h2>
+    <p>Xin chào, <span id="admin-name">Admin</span> | <a href="#" onclick="logout()">Đăng xuất</a></p>
+    <hr>
 
-  <div class="section">
-    <h2>📦 Quản lý Hàng hóa</h2>
-    <button onclick="window.location.href='products.html'">Danh sách sản phẩm (xem/sửa/xóa)</button>
-    <button onclick="window.location.href='product-add.html'">Thêm sản phẩm</button>
-    <button onclick="window.location.href='product-edit.html'">Chỉnh sửa sản phẩm</button>
+    <h3>📦 Quản lý Hàng hóa</h3>
+    <button onclick="showSection('products')">Danh sách sản phẩm</button>
+    <button onclick="showSection('addProduct')">Thêm sản phẩm</button>
+    <button onclick="showSection('editProduct')">Chỉnh sửa sản phẩm</button>
+
+    <h3>🧾 Đơn hàng</h3>
+    <button onclick="showSection('orders')">Danh sách đơn hàng</button>
+    <button onclick="showSection('editOrder')">Chỉnh sửa đơn hàng</button>
+
+    <h3>👤 Khách hàng</h3>
+    <button onclick="showSection('customers')">Danh sách khách hàng</button>
+    <button onclick="showSection('editCustomer')">Chỉnh sửa khách hàng</button>
   </div>
 
-  <div class="section">
-    <h2>🧾 Quản lý Đơn hàng</h2>
-    <button onclick="window.location.href='orders.html'">Danh sách đơn hàng (lọc và cập nhật trạng thái)</button>
-    <button onclick="window.location.href='order-edit.html'">Chỉnh sửa đơn hàng</button>
-  </div>
+  <div class="content">
+    <div id="products" class="section hidden">
+      <h2>📦 Danh sách sản phẩm</h2>
+      <p>Hiển thị danh sách sản phẩm tại đây...</p>
+    </div>
 
-  <div class="section">
-    <h2>👤 Quản lý Khách hàng</h2>
-    <button onclick="window.location.href='customers.html'">Danh sách khách hàng (tìm kiếm theo tên/email)</button>
-    <button onclick="window.location.href='customer-edit.html'">Chỉnh sửa khách hàng</button>
-  </div>
+    <div id="addProduct" class="section hidden">
+      <h2>➕ Thêm sản phẩm</h2>
+      <p>Biểu mẫu thêm sản phẩm mới...</p>
+    </div>
 
+    <div id="editProduct" class="section hidden">
+      <h2>🛠️ Chỉnh sửa sản phẩm</h2>
+      <p>Giao diện chỉnh sửa sản phẩm...</p>
+    </div>
+
+    <div id="orders" class="section hidden">
+      <h2>🧾 Danh sách đơn hàng</h2>
+      <p>Hiển thị đơn hàng và trạng thái...</p>
+    </div>
+
+    <div id="editOrder" class="section hidden">
+      <h2>✏️ Chỉnh sửa đơn hàng</h2>
+      <p>Chỉnh sửa thông tin đơn hàng...</p>
+    </div>
+
+    <div id="customers" class="section hidden">
+      <h2>👥 Danh sách khách hàng</h2>
+      <p>Tìm kiếm và hiển thị danh sách khách hàng...</p>
+    </div>
+
+    <div id="editCustomer" class="section hidden">
+      <h2>🛠️ Chỉnh sửa khách hàng</h2>
+      <p>Chỉnh sửa thông tin khách hàng...</p>
+    </div>
+
+    <div id="welcome">
+      <h1>Chào mừng đến Admin Dashboard</h1>
+      <p>Chọn một mục từ thanh điều hướng để bắt đầu.</p>
+    </div>
+  </div>
   <script>
     const role = localStorage.getItem('role');
     const adminName = localStorage.getItem('userName') || 'Admin';
