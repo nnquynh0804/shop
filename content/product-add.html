@@ -3,103 +3,132 @@
 <head>
   <meta charset="UTF-8">
   <title>Thêm sản phẩm</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
   <style>
     body {
-      font-family: Arial, sans-serif;
+      font-family: 'Inter', sans-serif;
       padding: 30px;
-      background-color: #fdf6ec;
+      background: linear-gradient(to right, #fdf6ec, #fffefc);
+      display: flex;
+      justify-content: center;
     }
 
     h1 {
       color: #6b4f3b;
+      margin-bottom: 20px;
+      text-align: center;
     }
 
     form {
       background-color: #fff;
-      padding: 20px;
-      border-radius: 8px;
-      max-width: 500px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      padding: 25px;
+      border-radius: 10px;
+      max-width: 550px;
+      width: 100%;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.1);
+      border: 1px solid #eee;
     }
 
     label {
       display: block;
-      margin-top: 15px;
-      font-weight: bold;
+      margin-top: 18px;
+      font-weight: 600;
+      color: #5a3e2b;
     }
 
     input[type="text"],
     input[type="number"] {
       width: 100%;
-      padding: 10px;
-      margin-top: 5px;
+      padding: 10px 12px;
+      margin-top: 6px;
       border: 1px solid #ccc;
-      border-radius: 4px;
+      border-radius: 6px;
+      font-size: 14px;
+      transition: 0.2s border;
+    }
+
+    input:focus {
+      border-color: #c08e6e;
+      outline: none;
     }
 
     #drop-zone {
       margin-top: 10px;
-      padding: 20px;
-      border: 2px dashed #bbb;
+      padding: 25px;
+      border: 2px dashed #c8b6a6;
       text-align: center;
-      color: #888;
-      border-radius: 6px;
-      background-color: #fff8f0;
+      color: #8c7b6c;
+      border-radius: 8px;
+      background-color: #fff8f2;
+      cursor: pointer;
+      transition: 0.2s;
     }
 
     #drop-zone.hover {
-      border-color: #888;
-      background-color: #f0e8de;
+      border-color: #a18872;
+      background-color: #f9efe4;
     }
 
     #preview {
-      margin-top: 10px;
+      margin-top: 12px;
       max-width: 100%;
       height: auto;
       display: none;
-      border: 1px solid #ccc;
-      padding: 4px;
+      border-radius: 6px;
+      border: 1px solid #ddd;
     }
 
     button {
-      margin-top: 20px;
-      padding: 10px 20px;
+      margin-top: 25px;
+      padding: 12px 20px;
       background-color: #6b4f3b;
       color: white;
       border: none;
-      border-radius: 4px;
+      border-radius: 6px;
       cursor: pointer;
+      font-weight: 600;
+      font-size: 15px;
+      transition: background 0.2s;
     }
 
     button:hover {
       background-color: #8d6e57;
     }
+
+    @media (max-width: 600px) {
+      body {
+        padding: 15px;
+      }
+
+      form {
+        padding: 20px;
+      }
+    }
   </style>
 </head>
 <body>
-  <h1>➕ Thêm sản phẩm mới</h1>
   <form id="product-form">
-    <label>Tên sản phẩm</label>
+    <h1>📦 Thêm sản phẩm mới</h1>
+
+    <label>📛 Tên sản phẩm</label>
     <input type="text" id="name" required>
 
-    <label>Giá</label>
+    <label>💰 Giá</label>
     <input type="number" id="price" required>
 
-    <label>Số lượng</label>
+    <label>📦 Số lượng</label>
     <input type="number" id="quantity" required>
 
-    <label>Ảnh minh họa (dán link hoặc kéo ảnh vào)</label>
+    <label>🖼️ Ảnh minh họa (URL hoặc kéo ảnh vào)</label>
     <input type="text" id="images" placeholder="https://..." required>
 
     <div id="drop-zone">📥 Kéo và thả ảnh vào đây</div>
     <img id="preview" src="#" alt="Ảnh minh họa">
 
-    <button type="submit">Thêm</button>
+    <button type="submit">➕ Thêm sản phẩm</button>
   </form>
 
   <script>
-    
-
     document.getElementById('product-form').addEventListener('submit', async (e) => {
       e.preventDefault();
 
@@ -158,7 +187,6 @@
       }
     });
 
-    // Tự xem trước ảnh nếu nhập URL trực tiếp
     imageInput.addEventListener('input', () => {
       preview.src = imageInput.value;
       preview.style.display = imageInput.value ? 'block' : 'none';
