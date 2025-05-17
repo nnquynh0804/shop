@@ -5,29 +5,80 @@
   <title>Danh sách sản phẩm</title>
   <style>
     body {
-      font-family: Arial, sans-serif;
-      padding: 20px;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      padding: 40px;
+      background-color: #f3efea;
+      color: #4e342e;
+      max-width: 1000px;
+      margin: auto;
     }
+
+    h1 {
+      text-align: center;
+      color: #5d4037;
+      margin-bottom: 30px;
+    }
+
     table {
       border-collapse: collapse;
       width: 100%;
-      margin-top: 20px;
+      background: #fff8f1;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      border-radius: 8px;
+      overflow: hidden;
     }
+
     th, td {
-      border: 1px solid #ccc;
-      padding: 8px;
-      vertical-align: top;
+      padding: 12px 15px;
+      text-align: left;
     }
+
     th {
-      background-color: #f0f0f0;
+      background-color: #8d6e63;
+      color: #fff;
+      font-weight: bold;
     }
+
+    tr:nth-child(even) {
+      background-color: #f5f0ec;
+    }
+
     img {
-      max-width: 100%;
+      width: 50px;
       height: auto;
+      border-radius: 4px;
+      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
     }
+
     button {
+      padding: 6px 12px;
       margin-right: 5px;
-      padding: 4px 8px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-weight: 500;
+      transition: background-color 0.3s ease;
+    }
+
+    button:hover {
+      opacity: 0.9;
+    }
+
+    button:first-child {
+      background-color: #6d4c41;
+      color: white;
+    }
+
+    button:last-child {
+      background-color: #bf360c;
+      color: white;
+    }
+
+    td[title] {
+      max-width: 200px;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
     }
   </style>
 </head>
@@ -51,12 +102,9 @@
     async function fetchProducts() {
       try {
         const res = await fetch('https://backend-7j0i.onrender.com/products');
-
-        if (!res.ok) {
-          throw new Error(`Lỗi: ${res.status}`);
-        }
-
+        if (!res.ok) throw new Error(`Lỗi: ${res.status}`);
         const data = await res.json();
+
         const tbody = document.querySelector('tbody');
         tbody.innerHTML = '';
 
@@ -66,7 +114,7 @@
             <td>${p.name}</td>
             <td>${p.price.toLocaleString('vi-VN')}₫</td>
             <td>${p.quantity || '-'}</td>
-            <td><img src="${p.images.trim()}" width="50"></td>
+            <td><img src="${p.images.trim()}" alt="${p.name}"></td>
             <td title="${p.about}">${p.about ? p.about.slice(0, 50) + '...' : ''}</td>
             <td>
               <button onclick="editProduct('${p._id}')">Sửa</button>
