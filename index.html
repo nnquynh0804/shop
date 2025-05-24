@@ -53,6 +53,11 @@
 
   <section>
     <div class="section-title">Sản phẩm nổi bật</div>
+     <div id="admin-controls" style="display: none; margin-bottom: 1em;">
+      <button onclick="alert('Thêm sản phẩm')">➕ Thêm sản phẩm</button>
+      <button onclick="alert('Sửa sản phẩm')">✏️ Sửa sản phẩm</button>
+      <button onclick="alert('Xóa sản phẩm')">🗑️ Xóa sản phẩm</button>
+    </div>
     <div class="products" id="product-list">
     </div>
   </section>
@@ -81,6 +86,9 @@
     fetch('footer.html')
       .then(response => response.text())
       .then(data => document.getElementById('footer-container').innerHTML = data);
+    const role = localStorage.getItem('role');
+    if (role === 'admin') {
+      document.getElementById('admin-controls').style.display = 'block';
   </script>
    <script type="text/javascript">
     var Tawk_API = Tawk_API || {}, Tawk_LoadStart = new Date();
