@@ -13,56 +13,36 @@ body {
   padding-top: 80px;
 
 }
-#admin-controls button,
-.admin-actions button {
-  background-color: #222;
+/* ===== Button Tone Nâu Sang Trọng ===== */
+#admin-controls .add-btn,
+.admin-actions .edit-btn,
+.admin-actions .delete-btn {
+  background-color: #6f4e37; /* Nâu cà phê sẫm */
   color: #fff;
   border: none;
   border-radius: 6px;
-  padding: 8px 12px;
+  padding: 8px 14px;
   font-size: 0.95rem;
   font-family: 'Poppins', sans-serif;
   cursor: pointer;
-  margin-right: 10px;
   transition: background-color 0.3s ease;
 }
 
-#admin-controls button:hover,
-.admin-actions button:hover {
-  background-color: #444;
-}
-
-/* Optional: Màu riêng cho từng loại nút */
-.admin-actions .edit-btn {
-  background-color: #2d87f0;
-}
-
-.admin-actions .edit-btn:hover {
-  background-color: #1c6dd0;
-}
-
-.admin-actions .delete-btn {
-  background-color: #e74c3c;
-}
-
+/* Hover tone nhẹ hơn */
+#admin-controls .add-btn:hover,
+.admin-actions .edit-btn:hover,
 .admin-actions .delete-btn:hover {
-  background-color: #c0392b;
+  background-color: #5c3f2e; /* Nâu sẫm hơn */
 }
 
-#admin-controls .add-btn {
-  background-color: #27ae60;
-}
-
-#admin-controls .add-btn:hover {
-  background-color: #219150;
-}
-
+/* Giãn cách giữa các nút */
 .admin-actions {
   margin-top: 8px;
   display: flex;
   justify-content: center;
   gap: 10px;
 }
+
 .hero {
   background: linear-gradient(rgba(78, 52, 46, 0.6), rgba(78, 52, 46, 0.6)),
     url('/images/anh-bia-thoi-trang.jpg') center/cover no-repeat;
