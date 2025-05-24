@@ -18,7 +18,7 @@ document.getElementById('login-form').addEventListener('submit', async (e) => {
       localStorage.setItem('role', result.role);
       localStorage.setItem('userName', result.fullName || 'User');
     
-      window.location.href = '/admin.html'; // 👉 Trang quản lý dành cho admin
+      window.location.href = '/index.html'; // 👉 Trang quản lý dành cho admin
     
 
     } else {
