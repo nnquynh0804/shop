@@ -17,11 +17,9 @@ document.getElementById('login-form').addEventListener('submit', async (e) => {
       localStorage.setItem('token', result.token);
       localStorage.setItem('role', result.role);
       localStorage.setItem('userName', result.fullName || 'User');
-     if (result.role === 'admin') {
+    
       window.location.href = '/admin.html'; // 👉 Trang quản lý dành cho admin
-    } else {
-      window.location.href = '/index.html'; // 👉 Trang người dùng thông thường
-    }
+    
 
     } else {
       errorEl.textContent = result.message || 'Sai thông tin đăng nhập';
