@@ -78,23 +78,36 @@ async function fetchAndRenderProducts() {
     const res = await fetch('https://backend-7j0i.onrender.com/products');
     const products = await res.json();
     container.innerHTML = '';
-    products.forEach(product => {
-      const div = document.createElement('div');
-      div.className = 'product';
-      div.innerHTML = `
-        <img src="${product.images}" alt="${product.name}" />
-        <h3>${product.name}</h3>
-        <p>${product.price.toLocaleString()}₫</p>
-        <button class="add-to-cart"
-          data-id="${product._id}"
-          data-name="${product.name}"
-          data-price="${product.price}"
-          data-src="${product.images}">
-          Thêm vào giỏ
-        </button>
-      `;
-      container.appendChild(div);
-    });
+   products.forEach(product => {
+  const div = document.createElement('div');
+  div.className = 'product';
+  div.innerHTML = `
+    <img src="${product.images}" alt="${product.name}" />
+    <h3>${product.name}</h3>
+    <p>${product.price.toLocaleString()}₫</p>
+    <button class="add-to-cart"
+      data-id="${product._id}"
+      data-name="${product.name}"
+      data-price="${product.price}"
+      data-src="${product.images}">
+      Thêm vào giỏ
+    </button>
+  `;
+
+  const role = localStorage.getItem('role');
+  if (role === 'admin') {
+    const adminActions = document.createElement('div');
+    adminActions.className = 'admin-actions';
+    adminActions.innerHTML = `
+      <button onclick="editProduct('${product._id}')">✏️ Sửa</button>
+      <button onclick="deleteProduct('${product._id}')">🗑️ Xóa</button>
+    `;
+    div.appendChild(adminActions);
+  }
+
+  container.appendChild(div);
+});
+
     attachAddToCartListeners();
   } catch (err) {
     container.innerHTML = 'Không thể tải sản phẩm. Vui lòng thử lại.';
