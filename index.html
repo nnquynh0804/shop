@@ -77,19 +77,28 @@
   <div id="footer-container"></div>
 
   <script src="scripts.js"></script>
-  <script>
-    // Load header and footer HTML vào trang (cần hỗ trợ server hoặc localhost)
-    fetch('header.html')
-      .then(response => response.text())
-      .then(data => document.getElementById('header-container').innerHTML = data);
+ <script>
+  // Load header và footer
+  fetch('header.html')
+    .then(response => response.text())
+    .then(data => document.getElementById('header-container').innerHTML = data);
 
-    fetch('footer.html')
-      .then(response => response.text())
-      .then(data => document.getElementById('footer-container').innerHTML = data);
-    const role = localStorage.getItem('role');
-    if (role === 'admin') {
-      document.getElementById('admin-controls').style.display = 'block';
-  </script>
+  fetch('footer.html')
+    .then(response => response.text())
+    .then(data => document.getElementById('footer-container').innerHTML = data);
+
+  // Hiển thị admin-controls nếu là admin
+  const role = localStorage.getItem('role');
+  if (role === 'admin') {
+    document.addEventListener('DOMContentLoaded', () => {
+      const adminControls = document.getElementById('admin-controls');
+      if (adminControls) {
+        adminControls.style.display = 'block';
+      }
+    });
+  }
+</script>
+
    <script type="text/javascript">
     var Tawk_API = Tawk_API || {}, Tawk_LoadStart = new Date();
     (function () {
