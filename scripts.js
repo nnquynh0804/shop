@@ -95,15 +95,16 @@ async function fetchAndRenderProducts() {
   `;
 
   const role = localStorage.getItem('role');
-  if (role === 'admin') {
-    const adminActions = document.createElement('div');
-    adminActions.className = 'admin-actions';
-    adminActions.innerHTML = `
-      <button onclick="editProduct('${product._id}')">✏️ Sửa</button>
-      <button onclick="deleteProduct('${product._id}')">🗑️ Xóa</button>
-    `;
-    div.appendChild(adminActions);
-  }
+ if (role === 'admin') {
+  const adminActions = document.createElement('div');
+  adminActions.className = 'admin-actions';
+  adminActions.innerHTML = `
+    <button class="edit-btn" onclick="editProduct('${product._id}')">✏️ Sửa</button>
+    <button class="delete-btn" onclick="deleteProduct('${product._id}')">🗑️ Xóa</button>
+  `;
+  div.appendChild(adminActions); // Đừng quên gắn vào div sản phẩm
+}
+
 
   container.appendChild(div);
 });
