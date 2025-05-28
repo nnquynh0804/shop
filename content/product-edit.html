@@ -116,88 +116,92 @@
   </form>
 
   <script>
-    const id = new URLSearchParams(window.location.search).get('id');
-    const nameInput = document.getElementById('name');
-    const priceInput = document.getElementById('price');
-    const quantityInput = document.getElementById('quantity');
-    const imagesInput = document.getElementById('images');
-    const preview = document.getElementById('preview');
+  const id = new URLSearchParams(window.location.search).get('id');
 
-    async function fetchData() {
-      const res = await fetch(`https://backend-7j0i.onrender.com/products/${id}`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      const p = await res.json();
-      nameInput.value = p.name;
-      priceInput.value = p.price;
-      quantityInput.value = p.quantity;
-      imagesInput.value = p.images;
+  const nameInput = document.getElementById('name');
+  const priceInput = document.getElementById('price');
+  const quantityInput = document.getElementById('quantity');
+  const imagesInput = document.getElementById('images');
+  const preview = document.getElementById('preview');
+
+  async function fetchData() {
+    const res = await fetch(`https://backend-7j0i.onrender.com/products/${id}`);
+    const p = await res.json();
+    nameInput.value = p.name || '';
+    priceInput.value = p.price || 0;
+    quantityInput.value = p.quantity || 0;
+    imagesInput.value = p.images || '';
+    if (p.images) {
       preview.src = p.images;
       preview.style.display = 'block';
     }
+  }
 
-    document.getElementById('edit-form').addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const data = {
-        name: nameInput.value,
-        price: priceInput.value,
-        quantity: quantityInput.value,
-        images: imagesInput.value
+  document.getElementById('edit-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    const data = {
+      name: nameInput.value,
+      price: parseFloat(priceInput.value),
+      quantity: parseInt(quantityInput.value),
+      images: imagesInput.value
+    };
+
+    const res = await fetch(`https://backend-7j0i.onrender.com/products/${id}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json'
+        // Nếu có token, bạn có thể thêm Authorization vào đây.
+      },
+      body: JSON.stringify(data)
+    });
+
+    if (res.ok) {
+      alert('✅ Đã cập nhật sản phẩm!');
+      window.location.href = 'products.html';
+    } else {
+      alert('❌ Cập nhật thất bại');
+    }
+  });
+
+  // Drag and drop ảnh
+  const dropArea = document.getElementById("drop-area");
+
+  dropArea.addEventListener("dragover", (e) => {
+    e.preventDefault();
+    dropArea.classList.add('hover');
+  });
+
+  dropArea.addEventListener("dragleave", () => {
+    dropArea.classList.remove('hover');
+  });
+
+  dropArea.addEventListener("drop", (e) => {
+    e.preventDefault();
+    dropArea.classList.remove('hover');
+
+    const file = e.dataTransfer.files[0];
+    if (file && file.type.startsWith('image/')) {
+      const reader = new FileReader();
+      reader.onload = function (event) {
+        imagesInput.value = event.target.result;
+        preview.src = event.target.result;
+        preview.style.display = 'block';
       };
+      reader.readAsDataURL(file);
+    } else {
+      alert('❗ Vui lòng chọn tệp ảnh hợp lệ');
+    }
+  });
 
-      const res = await fetch(`https://backend-7j0i.onrender.com/products/${id}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`
-        },
-        body: JSON.stringify(data)
-      });
+  imagesInput.addEventListener('input', () => {
+    preview.src = imagesInput.value;
+    preview.style.display = imagesInput.value ? 'block' : 'none';
+  });
 
-      if (res.ok) {
-        alert('✅ Đã cập nhật sản phẩm!');
-        window.location.href = 'products.html';
-      } else {
-        alert('❌ Cập nhật thất bại');
-      }
-    });
+  // Gọi API để load dữ liệu ban đầu
+  fetchData();
+</script>
 
-    // Drag and drop ảnh
-    const dropArea = document.getElementById("drop-area");
-
-    dropArea.addEventListener("dragover", (e) => {
-      e.preventDefault();
-      dropArea.classList.add('hover');
-    });
-
-    dropArea.addEventListener("dragleave", () => {
-      dropArea.classList.remove('hover');
-    });
-
-    dropArea.addEventListener("drop", (e) => {
-      e.preventDefault();
-      dropArea.classList.remove('hover');
-
-      const file = e.dataTransfer.files[0];
-      if (file && file.type.startsWith('image/')) {
-        const reader = new FileReader();
-        reader.onload = function (event) {
-          imagesInput.value = event.target.result;
-          preview.src = event.target.result;
-          preview.style.display = 'block';
-        };
-        reader.readAsDataURL(file);
-      } else {
-        alert('❗ Vui lòng chọn tệp ảnh hợp lệ');
-      }
-    });
-
-    imagesInput.addEventListener('input', () => {
-      preview.src = imagesInput.value;
-      preview.style.display = imagesInput.value ? 'block' : 'none';
-    });
-
-    fetchData();
-  </script>
 </body>
 </html>
