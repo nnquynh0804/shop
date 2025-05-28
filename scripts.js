@@ -70,51 +70,63 @@ function decreaseQty(index) {
   renderCart();
 }
 
+<script>
 async function fetchAndRenderProducts() {
   const container = document.getElementById('product-list');
   if (!container) return;
+
   container.innerHTML = 'Đang tải sản phẩm...';
+
   try {
     const res = await fetch('https://backend-7j0i.onrender.com/products');
     const products = await res.json();
     container.innerHTML = '';
-   products.forEach(product => {
-  const div = document.createElement('div');
-  div.className = 'product';
-  div.innerHTML = `
-    <img src="${product.images}" alt="${product.name}" />
-    <h3>${product.name}</h3>
-    <p>${product.price.toLocaleString()}₫</p>
-    <button class="add-to-cart"
-      data-id="${product._id}"
-      data-name="${product.name}"
-      data-price="${product.price}"
-      data-src="${product.images}">
-      Thêm vào giỏ
-    </button>
-  `;
 
-  const role = localStorage.getItem('role');
- if (role === 'admin') {
-  const adminActions = document.createElement('div');
-  adminActions.className = 'admin-actions';
-  adminActions.innerHTML = `
-    <button class="edit-btn" onclick="editProduct('${product._id}')">✏️ Sửa</button>
-    <button class="delete-btn" onclick="deleteProduct('${product._id}')">🗑️ Xóa</button>
-  `;
-  div.appendChild(adminActions); // Đừng quên gắn vào div sản phẩm
-}
+    products.forEach(product => {
+      const div = document.createElement('div');
+      div.className = 'product';
+      div.innerHTML = `
+        <img src="${product.images}" alt="${product.name}" />
+        <h3>${product.name}</h3>
+        <p>${product.price.toLocaleString()}₫</p>
+        <button class="add-to-cart"
+          data-id="${product._id}"
+          data-name="${product.name}"
+          data-price="${product.price}"
+          data-src="${product.images}">
+          Thêm vào giỏ
+        </button>
+      `;
 
+      const role = localStorage.getItem('role');
+      if (role === 'admin') {
+        const adminActions = document.createElement('div');
+        adminActions.className = 'admin-actions';
+        adminActions.innerHTML = `
+          <button class="edit-btn" onclick="editProduct('${product._id}')">✏️ Sửa</button>
+          <button class="delete-btn" onclick="deleteProduct('${product._id}')">🗑️ Xóa</button>
+        `;
+        div.appendChild(adminActions);
+      }
 
-  container.appendChild(div);
-});
+      container.appendChild(div);
+    });
 
-    attachAddToCartListeners();
   } catch (err) {
-    container.innerHTML = 'Không thể tải sản phẩm. Vui lòng thử lại.';
+    container.innerHTML = 'Lỗi khi tải sản phẩm!';
     console.error(err);
   }
 }
+
+// Hàm chuyển hướng đến trang chỉnh sửa
+function editProduct(productId) {
+  window.location.href = `./product-edit.html?id=${productId}`;
+}
+
+// Gọi hàm sau khi load trang
+fetchAndRenderProducts();
+</script>
+
 
 function attachAddToCartListeners() {
   document.querySelectorAll('.add-to-cart').forEach(btn => {
