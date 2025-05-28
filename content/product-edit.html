@@ -163,7 +163,23 @@
       alert('❌ Cập nhật thất bại');
     }
   });
+const dropArea = document.getElementById('drop-area');
 
+// Xử lý drag
+dropArea.addEventListener("dragover", (e) => {
+  e.preventDefault();
+  dropArea.classList.add("hover");
+});
+
+dropArea.addEventListener("dragleave", () => {
+  dropArea.classList.remove("hover");
+});
+
+dropArea.addEventListener("drop", async (e) => {
+  e.preventDefault();
+  dropArea.classList.remove('hover');
+  // ...
+});
   // Drag and drop ảnh
   dropArea.addEventListener("drop", async (e) => {
   e.preventDefault();
