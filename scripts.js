@@ -120,7 +120,7 @@ async function fetchAndRenderProducts() {
 
 // Hàm chuyển hướng đến trang chỉnh sửa
 function editProduct(productId) {
-  window.location.href = `./product-edit.html?id=${productId}`;
+  window.location.href = `./content/product-edit.html?id=${productId}`;
 }
 
 
