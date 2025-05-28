@@ -70,7 +70,7 @@ function decreaseQty(index) {
   renderCart();
 }
 
-<script>
+
 async function fetchAndRenderProducts() {
   const container = document.getElementById('product-list');
   if (!container) return;
@@ -122,10 +122,6 @@ async function fetchAndRenderProducts() {
 function editProduct(productId) {
   window.location.href = `./product-edit.html?id=${productId}`;
 }
-
-// Gọi hàm sau khi load trang
-fetchAndRenderProducts();
-</script>
 
 
 function attachAddToCartListeners() {
