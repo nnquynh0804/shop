@@ -165,39 +165,47 @@
   });
 
   // Drag and drop ảnh
-  const dropArea = document.getElementById("drop-area");
+  dropArea.addEventListener("drop", async (e) => {
+  e.preventDefault();
+  dropArea.classList.remove('hover');
 
-  dropArea.addEventListener("dragover", (e) => {
-    e.preventDefault();
-    dropArea.classList.add('hover');
-  });
+  const file = e.dataTransfer.files[0];
+  if (file && file.type.startsWith('image/')) {
+    // Đọc file thành base64
+    const reader = new FileReader();
+    reader.onload = async function (event) {
+      const base64data = event.target.result.split(',')[1]; // Lấy phần base64 (bỏ "data:image/xxx;base64,")
 
-  dropArea.addEventListener("dragleave", () => {
-    dropArea.classList.remove('hover');
-  });
+      try {
+        // Gửi lên API upload ảnh của bạn
+        const res = await fetch('https://backend-7j0i.onrender.com/upload', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            filename: file.name,
+            contentBase64: base64data
+          }),
+        });
 
-  dropArea.addEventListener("drop", (e) => {
-    e.preventDefault();
-    dropArea.classList.remove('hover');
-
-    const file = e.dataTransfer.files[0];
-    if (file && file.type.startsWith('image/')) {
-      const reader = new FileReader();
-      reader.onload = function (event) {
-        imagesInput.value = event.target.result;
-        preview.src = event.target.result;
-        preview.style.display = 'block';
-      };
-      reader.readAsDataURL(file);
-    } else {
-      alert('❗ Vui lòng chọn tệp ảnh hợp lệ');
-    }
-  });
-
-  imagesInput.addEventListener('input', () => {
-    preview.src = imagesInput.value;
-    preview.style.display = imagesInput.value ? 'block' : 'none';
-  });
+        const json = await res.json();
+        if (res.ok && json.url) {
+          imagesInput.value = json.url; // Gán link ảnh trả về
+          preview.src = json.url;
+          preview.style.display = 'block';
+        } else {
+          alert('❌ Upload ảnh thất bại');
+        }
+      } catch (err) {
+        alert('❌ Lỗi khi upload ảnh: ' + err.message);
+      }
+    };
+    reader.readAsDataURL(file);
+  } else {
+    alert('❗ Vui lòng chọn tệp ảnh hợp lệ');
+  }
+});
 
   // Gọi API để load dữ liệu ban đầu
   fetchData();
