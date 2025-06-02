@@ -112,11 +112,15 @@ async function fetchAndRenderProducts() {
       container.appendChild(div);
     });
 
+    // ✅ GỌI HÀM GẮN SỰ KIỆN SAU KHI ĐÃ RENDER
+    attachAddToCartListeners();
+
   } catch (err) {
     container.innerHTML = 'Lỗi khi tải sản phẩm!';
     console.error(err);
   }
 }
+
 
 // Hàm chuyển hướng đến trang chỉnh sửa
 function editProduct(productId) {
