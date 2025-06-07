@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title>Chi Tiết Sản Phẩm</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      margin: 0;
+      background-color: #f4f1ec;
+      color: #3e2c23;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: 40px auto;
+      background-color: #fff8f0;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      border-radius: 12px;
+      overflow: hidden;
+      padding: 20px;
+    }
+
+    .product-img {
+      width: 100%;
+      max-height: 400px;
+      object-fit: cover;
+      border-radius: 8px;
+      margin-bottom: 20px;
+    }
+
+    .product-name {
+      font-size: 28px;
+      font-weight: bold;
+      margin-bottom: 10px;
+      color: #5a3c2e;
+    }
+
+    .product-price {
+      font-size: 22px;
+      color: #a0522d;
+      margin-bottom: 20px;
+    }
+
+    .back-btn {
+      display: inline-block;
+      margin-top: 30px;
+      padding: 10px 20px;
+      background-color: #8b5e3c;
+      color: white;
+      text-decoration: none;
+      border-radius: 6px;
+      transition: background-color 0.3s ease;
+    }
+
+    .back-btn:hover {
+      background-color: #5a3c2e;
+    }
+  </style>
+</head>
+<body>
+  <div class="container" id="product-detail">
+    <p>Đang tải thông tin sản phẩm...</p>
+  </div>
+
+  <script>
+    const container = document.getElementById('product-detail');
+    const urlParams = new URLSearchParams(window.location.search);
+    const id = urlParams.get('id');
+
+    if (id) {
+      fetch(`https://backend-7j0i.onrender.com/products/${id}`)
+        .then(res => res.json())
+        .then(product => {
+          container.innerHTML = `
+            <img src="${product.images}" alt="${product.name}" class="product-img" />
+            <div class="product-name">${product.name}</div>
+            <div class="product-price">${product.price.toLocaleString()}₫</div>
+            <a href="index.html" class="back-btn">← Quay lại</a>
+          `;
+        })
+        .catch(err => {
+          container.innerHTML = '<p style="color:red;">Không thể tải sản phẩm.</p>';
+          console.error(err);
+        });
+    } else {
+      container.innerHTML = '<p>Không tìm thấy sản phẩm.</p>';
+    }
+  </script>
+</body>
+</html>
