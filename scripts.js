@@ -86,17 +86,25 @@ async function fetchAndRenderProducts() {
       const div = document.createElement('div');
       div.className = 'product';
       div.innerHTML = `
+      <div class="product-content" data-id="${product._id}" style="cursor:pointer;">
         <img src="${product.images}" alt="${product.name}" />
         <h3>${product.name}</h3>
         <p>${product.price.toLocaleString()}₫</p>
-        <button class="add-to-cart"
-          data-id="${product._id}"
-          data-name="${product.name}"
-          data-price="${product.price}"
-          data-src="${product.images}">
-          Thêm vào giỏ
-        </button>
-      `;
+      </div>
+      <button class="add-to-cart"
+        data-id="${product._id}"
+        data-name="${product.name}"
+        data-price="${product.price}"
+        data-src="${product.images}">
+        Thêm vào giỏ
+      </button>
+    `;
+      const productContent = div.querySelector('.product-content');
+      productContent.addEventListener('click', () => {
+        window.location.href = `about.html?id=${product._id}`;
+      });
+
+
 
       const role = localStorage.getItem('role');
       if (role === 'admin') {
