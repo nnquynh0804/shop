@@ -87,45 +87,41 @@
     <p>Đang tải thông tin sản phẩm...</p>
   </div>
 
-  <script>
-    const container = document.getElementById('product-detail');
-    const urlParams = new URLSearchParams(window.location.search);
-    const id = urlParams.get('id');
+  <!-- THÊM DÒNG NÀY TRƯỚC THẺ </body> -->
+<script src="scripts.js"></script>
+<script>
+  const container = document.getElementById('product-detail');
+  const urlParams = new URLSearchParams(window.location.search);
+  const id = urlParams.get('id');
 
-    if (id) {
-      fetch(`https://backend-7j0i.onrender.com/products/${id}`)
-        .then(res => res.json())
-        .then(product => {
-          container.innerHTML = `
-            <img src="${product.images}" alt="${product.name}" class="product-img" />
-            <div class="product-info">
-              <div class="product-name">${product.name}</div>
-              <div class="product-price">${product.price.toLocaleString()}₫</div>
-              <div class="product-about">
-                ${product.about || "Chiếc váy dự tiệc sang trọng, tôn dáng, thích hợp cho các buổi tiệc tối, sự kiện..."}
-              </div>
-              <button class="add-to-cart"
-                onclick="addToCart('${product._id}', '${product.name}', ${product.price}, '${product.images}')">
-                🛒 Thêm vào giỏ
-              </button>
-              <a href="index.html" class="back-btn">← Quay lại trang chính</a>
+  if (id) {
+    fetch(`https://backend-7j0i.onrender.com/products/${id}`)
+      .then(res => res.json())
+      .then(product => {
+        container.innerHTML = `
+          <img src="${product.images}" alt="${product.name}" class="product-img" />
+          <div class="product-info">
+            <div class="product-name">${product.name}</div>
+            <div class="product-price">${product.price.toLocaleString()}₫</div>
+            <div class="product-about">
+              ${product.about}
             </div>
-          `;
-        })
-        .catch(err => {
-          container.innerHTML = '<p style="color:red;">Không thể tải sản phẩm.</p>';
-          console.error(err);
-        });
-    } else {
-      container.innerHTML = '<p>Không tìm thấy sản phẩm.</p>';
-    }
+            <button class="add-to-cart"
+              onclick="addToCart('${product.name}', ${product.price}, '${product.images}', '${product._id}')">
+              🛒 Thêm vào giỏ
+            </button>
+            <a href="index.html" class="back-btn">← Quay lại trang chính</a>
+          </div>
+        `;
+      })
+      .catch(err => {
+        container.innerHTML = '<p style="color:red;">Không thể tải sản phẩm.</p>';
+        console.error(err);
+      });
+  } else {
+    container.innerHTML = '<p>Không tìm thấy sản phẩm.</p>';
+  }
+</script>
 
-    function addToCart(id, name, price, images) {
-      const cart = JSON.parse(localStorage.getItem('cart')) || [];
-      cart.push({ id, name, price, images, quantity: 1 });
-      localStorage.setItem('cart', JSON.stringify(cart));
-      alert('Đã thêm vào giỏ hàng!');
-    }
-  </script>
 </body>
 </html>
