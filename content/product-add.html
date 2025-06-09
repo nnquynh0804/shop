@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <title>Thêm sản phẩm</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet" />
   <style>
     body {
       font-family: 'Inter', sans-serif;
@@ -12,13 +12,11 @@
       display: flex;
       justify-content: center;
     }
-
     h1 {
       color: #6b4f3b;
       margin-bottom: 20px;
       text-align: center;
     }
-
     form {
       background-color: #fff;
       padding: 25px;
@@ -28,14 +26,12 @@
       box-shadow: 0 6px 18px rgba(0,0,0,0.1);
       border: 1px solid #eee;
     }
-
     label {
       display: block;
       margin-top: 18px;
       font-weight: 600;
       color: #5a3e2b;
     }
-
     input[type="text"],
     input[type="number"] {
       width: 100%;
@@ -46,12 +42,10 @@
       font-size: 14px;
       transition: 0.2s border;
     }
-
     input:focus {
       border-color: #c08e6e;
       outline: none;
     }
-
     #drop-zone {
       margin-top: 10px;
       padding: 25px;
@@ -63,12 +57,10 @@
       cursor: pointer;
       transition: 0.2s;
     }
-
     #drop-zone.hover {
       border-color: #a18872;
       background-color: #f9efe4;
     }
-
     #preview {
       margin-top: 12px;
       max-width: 100%;
@@ -77,7 +69,6 @@
       border-radius: 6px;
       border: 1px solid #ddd;
     }
-
     button {
       margin-top: 25px;
       padding: 12px 20px;
@@ -90,16 +81,13 @@
       font-size: 15px;
       transition: background 0.2s;
     }
-
     button:hover {
       background-color: #8d6e57;
     }
-
     @media (max-width: 600px) {
       body {
         padding: 15px;
       }
-
       form {
         padding: 20px;
       }
@@ -111,85 +99,145 @@
     <h1>📦 Thêm sản phẩm mới</h1>
 
     <label>📛 Tên sản phẩm</label>
-    <input type="text" id="name" required>
+    <input type="text" id="name" required />
 
     <label>💰 Giá</label>
-    <input type="number" id="price" required>
+    <input type="number" id="price" required />
 
     <label>📦 Số lượng</label>
-    <input type="number" id="quantity" required>
+    <input type="number" id="quantity" required />
 
     <label>🖼️ Ảnh minh họa (URL hoặc kéo ảnh vào)</label>
-    <input type="text" id="images" placeholder="https://..." required>
+    <input type="text" id="images" placeholder="https://..." required readonly />
 
     <div id="drop-zone">📥 Kéo và thả ảnh vào đây</div>
-    <img id="preview" src="#" alt="Ảnh minh họa">
+    <img id="preview" src="#" alt="Ảnh minh họa" />
 
     <button type="submit">➕ Thêm sản phẩm</button>
   </form>
 
   <script>
-    document.getElementById('product-form').addEventListener('submit', async (e) => {
-      e.preventDefault();
-
-      const name = document.getElementById('name').value;
-      const price = document.getElementById('price').value;
-      const quantity = document.getElementById('quantity').value;
-      const images = document.getElementById('images').value;
-
-      const res = await fetch('https://backend-7j0i.onrender.com/products', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`
-        },
-        body: JSON.stringify({ name, price, quantity, images })
-      });
-
-      const result = await res.json();
-      if (res.ok) {
-        alert('✅ Thêm sản phẩm thành công!');
-        window.location.href = 'products.html';
-      } else {
-        alert('❌ Lỗi: ' + (result.message || 'Không thêm được sản phẩm'));
-      }
-    });
-
-    // Xử lý kéo và thả ảnh
     const dropZone = document.getElementById('drop-zone');
     const imageInput = document.getElementById('images');
     const preview = document.getElementById('preview');
+
+    // Hàm lấy base64 thuần từ file
+    function getBase64FromFile(file) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = () => {
+          // Chuỗi dạng: data:image/png;base64,iVBORw0...
+          const base64String = reader.result.split(',')[1]; // lấy phần base64 thôi
+          resolve(base64String);
+        };
+        reader.onerror = (error) => reject(error);
+      });
+    }
+
+    // Hàm upload base64 lên backend, trả về URL ảnh trên Github
+    async function uploadImage(base64, filename) {
+      try {
+        const res = await fetch('http://localhost:3000/upload', { // đổi thành URL backend của bạn
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            filename,
+            contentBase64: base64,
+          }),
+        });
+
+        const data = await res.json();
+        if (res.ok && data.url) {
+          return data.url;
+        } else {
+          alert('Lỗi upload ảnh: ' + JSON.stringify(data.error || data));
+          return null;
+        }
+      } catch (error) {
+        alert('Lỗi kết nối upload ảnh: ' + error.message);
+        return null;
+      }
+    }
 
     dropZone.addEventListener('dragover', (e) => {
       e.preventDefault();
       dropZone.classList.add('hover');
     });
 
-    dropZone.addEventListener('dragleave', () => {
+    dropZone.addEventListener('dragleave', (e) => {
       dropZone.classList.remove('hover');
     });
 
-    dropZone.addEventListener('drop', (e) => {
+    dropZone.addEventListener('drop', async (e) => {
       e.preventDefault();
       dropZone.classList.remove('hover');
 
       const file = e.dataTransfer.files[0];
-      if (file && file.type.startsWith('image/')) {
-        const reader = new FileReader();
-        reader.onload = function (event) {
-          imageInput.value = event.target.result;
-          preview.src = event.target.result;
-          preview.style.display = 'block';
-        };
-        reader.readAsDataURL(file);
-      } else {
+      if (!file || !file.type.startsWith('image/')) {
         alert('Vui lòng thả một tệp ảnh.');
+        return;
       }
+
+      preview.src = '';
+      preview.style.display = 'none';
+      imageInput.value = '';
+
+      // Lấy base64
+      const base64 = await getBase64FromFile(file);
+      if (!base64) {
+        alert('Lỗi đọc file ảnh');
+        return;
+      }
+
+      // Upload ảnh lên backend -> Github
+      const uploadedUrl = await uploadImage(base64, file.name);
+      if (!uploadedUrl) return;
+
+      // Gán URL ảnh vào input và hiển thị preview
+      imageInput.value = uploadedUrl;
+      preview.src = uploadedUrl;
+      preview.style.display = 'block';
     });
 
-    imageInput.addEventListener('input', () => {
-      preview.src = imageInput.value;
-      preview.style.display = imageInput.value ? 'block' : 'none';
+    // Xử lý submit form
+    document.getElementById('product-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const name = document.getElementById('name').value.trim();
+      const price = Number(document.getElementById('price').value);
+      const quantity = Number(document.getElementById('quantity').value);
+      const images = document.getElementById('images').value.trim();
+
+      if (!images) {
+        alert('Vui lòng tải ảnh lên bằng cách kéo thả ảnh vào vùng bên trên.');
+        return;
+      }
+
+      // Thêm token ở đây nếu cần
+
+      try {
+        const res = await fetch('https://backend-7j0i.onrender.com/products', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({ name, price, quantity, images }),
+        });
+
+        const result = await res.json();
+        if (res.ok) {
+          alert('✅ Thêm sản phẩm thành công!');
+          window.location.href = 'products.html';
+        } else {
+          alert('❌ Lỗi: ' + (result.message || 'Không thêm được sản phẩm'));
+        }
+      } catch (err) {
+        alert('❌ Lỗi kết nối: ' + err.message);
+      }
     });
   </script>
 </body>
