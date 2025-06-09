@@ -80,19 +80,6 @@
       background-color: #5a3c2e;
     }
 
-    .back-btn {
-  margin-top: 0;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 12px 24px; /* giống .add-to-cart */
-  background-color: #d2b48c;
-  color: #3e2c23;
-  text-decoration: none;
-  border-radius: 6px;
-  font-size: 16px;
-  height: 44px; /* hoặc tương tự với .add-to-cart */
-}
 
   </style>
 </head>
@@ -129,13 +116,14 @@
             <div class="product-about">
               ${product.about}
             </div>
-            <div class="action-row">
+            <div class="btn-group">
               <button class="add-to-cart"
                 onclick="addToCart('${product.name}', ${product.price}, '${product.images}', '${product._id}')">
                 🛒 Thêm vào giỏ
               </button>
               <a href="index.html" class="back-btn">← Quay lại trang chính</a>
             </div>
+
 
           </div>
         `;
