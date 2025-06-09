@@ -30,7 +30,8 @@ body {
 
 .btn-group {
   display: flex;
-  gap: 16px;
+  justify-content: center;
+  gap: 20px;
   margin-top: 20px;
 }
 
