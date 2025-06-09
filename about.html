@@ -124,11 +124,14 @@
             <div class="product-about">
               ${product.about}
             </div>
-            <button class="add-to-cart"
-              onclick="addToCart('${product.name}', ${product.price}, '${product.images}', '${product._id}')">
-              🛒 Thêm vào giỏ
-            </button>
-            <a href="index.html" class="back-btn">← Quay lại trang chính</a>
+            <div class="action-row">
+              <button class="add-to-cart"
+                onclick="addToCart('${product.name}', ${product.price}, '${product.images}', '${product._id}')">
+                🛒 Thêm vào giỏ
+              </button>
+              <a href="index.html" class="back-btn">← Quay lại trang chính</a>
+            </div>
+
           </div>
         `;
       })
