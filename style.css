@@ -30,24 +30,37 @@ body {
 
 .btn-group {
   display: flex;
-  gap: 16px; /* khoảng cách giữa hai nút */
-  margin-top: 15px;
+  gap: 16px;
+  margin-top: 20px;
 }
 
+.add-to-cart,
 .back-btn {
-  background-color: #d2b48c;
-  color: #3e2c23;
-  text-decoration: none;
-  padding: 14px 24px;
-  border-radius: 40px;
+  padding: 12px 24px;
+  border-radius: 30px;
   font-weight: 600;
+  font-size: 16px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   height: 48px;
   white-space: nowrap;
-  transition: background 0.3s;
+  transition: all 0.3s ease;
+  text-decoration: none;
 }
+
+.add-to-cart {
+  background-color: var(--main-color); /* ví dụ: #8B5E3C */
+  color: #fff;
+  border: none;
+  cursor: pointer;
+}
+
+.back-btn {
+  background-color: #d2b48c;
+  color: #3e2c23;
+}
+
 
 /* Hover tone nhẹ hơn */
 #admin-controls .add-btn:hover,
@@ -203,18 +216,6 @@ section {
   font-weight: 600;
   color: var(--accent-color);
   font-size: 1.2em;
-}
-
-.add-to-cart {
-  background: var(--main-color);
-  color: white;
-  border: none;
-  padding: 14px 24px;
-  border-radius: 40px;
-  cursor: pointer;
-  font-weight: 600;
-  margin-top: 15px;
-  transition: background 0.3s;
 }
 
 .add-to-cart:hover {
