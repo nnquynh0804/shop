@@ -28,6 +28,13 @@ body {
   transition: background-color 0.3s ease;
 }
 
+.action-row {
+  display: flex;
+  gap: 15px;
+  margin-top: 20px;
+  align-items: center;
+}
+
 /* Hover tone nhẹ hơn */
 #admin-controls .add-btn:hover,
 .admin-actions .edit-btn:hover,
