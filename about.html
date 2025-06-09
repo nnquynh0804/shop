@@ -92,7 +92,15 @@
   </style>
 </head>
 <body>
+<button id="view-cart-btn">🛒 Giỏ hàng (<span id="cart-count">0</span>)</button>
 
+  <div id="cart-modal">
+    <h3>🛒 Giỏ hàng của bạn</h3>
+    <ul id="cart-items"></ul>
+    <div class="summary">Tổng cộng: <span id="cart-total">0₫</span></div>
+    <button id="checkout-btn">Thanh toán</button>
+    <button id="close-cart-btn">Đóng</button>
+  </div>
   <div class="container" id="product-detail">
     <p>Đang tải thông tin sản phẩm...</p>
   </div>
