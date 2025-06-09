@@ -138,7 +138,7 @@
     // Hàm upload base64 lên backend, trả về URL ảnh trên Github
     async function uploadImage(base64, filename) {
       try {
-        const res = await fetch('https://backend-7j0i.onrender.com/routes/upload', { // đổi thành URL backend của bạn
+        const res = await fetch('https://backend-7j0i.onrender.com/upload', { // đổi thành URL backend của bạn
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
