@@ -135,20 +135,37 @@
     }
   // Gọi proxy API nội bộ để upload ảnh
   async function uploadImage(base64, filename) {
+  try {
+    const res = await fetch('/api/upload-image', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ filename, base64 })
+    });
+
+    // Cố gắng parse JSON từ response
+    let data;
     try {
-      const res = await fetch('https://backend-7j0i.onrender.com/upload', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ filename, base64 })
-      });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || 'Upload thất bại');
-      return data.url;
-    } catch (err) {
-      alert('❌ Lỗi upload ảnh: ' + err.message);
-      return null;
+      data = await res.json();
+    } catch {
+      throw new Error(`Server trả về không phải JSON (status ${res.status})`);
     }
+
+    if (res.ok && data.url) {
+      return data.url;
+    } else {
+      // Nếu có trường error, lấy ra; nếu không, hiển thị toàn bộ data
+      const msg = data.error || JSON.stringify(data);
+      throw new Error(`Upload thất bại (${res.status}): ${msg}`);
+    }
+
+  } catch (err) {
+    // log xuống console để dễ debug
+    console.error('uploadImage error:', err);
+    alert('❌ Lỗi upload ảnh: ' + err.message);
+    return null;
   }
+}
+
 
   // Xử lý drag & drop
   dropZone.addEventListener('dragover', e => {
