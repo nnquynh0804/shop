@@ -139,7 +139,7 @@
     const res = await fetch('https://backend-7j0i.onrender.com/upload', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ filename, base64 })
+      body: JSON.stringify({ filename, imageBase64: base64 })
     });
 
     // Cố gắng parse JSON từ response
