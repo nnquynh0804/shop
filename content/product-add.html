@@ -141,6 +141,7 @@
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`, // 👈 Thêm dòng này
       },
       body: JSON.stringify({
         filename,
@@ -167,6 +168,7 @@
     return null;
   }
 }
+
 
     // Xử lý kéo thả ảnh
     dropZone.addEventListener('dragover', (e) => {
