@@ -135,116 +135,95 @@
     }
 
     // Upload ảnh dạng base64 lên backend
-     const token = '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'; // 🔒 Điền token thật nếu cần xác thực
-    async function uploadImage(base64, filename) {
-  try {
-    const res = await fetch('https://backend-7j0i.onrender.com/upload', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`, // 👈 Thêm dòng này
-      },
-      body: JSON.stringify({
-        filename,
-        imageBase64: base64,
-      }),
-    });
+    <script>
+  const dropZone = document.getElementById('drop-zone');
+  const imageInput = document.getElementById('images');
+  const preview = document.getElementById('preview');
 
-    const contentType = res.headers.get('content-type');
-    if (res.ok && contentType && contentType.includes('application/json')) {
+  // Chuyển file thành base64
+  function getBase64FromFile(file) {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = () => resolve(reader.result.split(',')[1]);
+      reader.onerror = err => reject(err);
+    });
+  }
+
+  // Gọi proxy API nội bộ để upload ảnh
+  async function uploadImage(base64, filename) {
+    try {
+      const res = await fetch('https://backend-7j0i.onrender.com/upload', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ filename, base64 })
+      });
       const data = await res.json();
-      if (data.url) {
-        return data.url;
-      } else {
-        alert('❌ Upload thất bại: Không có URL trả về');
-        return null;
-      }
-    } else {
-      const text = await res.text();
-      throw new Error("Lỗi từ backend: " + text);
+      if (!res.ok) throw new Error(data.error || 'Upload thất bại');
+      return data.url;
+    } catch (err) {
+      alert('❌ Lỗi upload ảnh: ' + err.message);
+      return null;
+    }
+  }
+
+  // Xử lý drag & drop
+  dropZone.addEventListener('dragover', e => {
+    e.preventDefault();
+    dropZone.classList.add('hover');
+  });
+  dropZone.addEventListener('dragleave', () => dropZone.classList.remove('hover'));
+  dropZone.addEventListener('drop', async e => {
+    e.preventDefault();
+    dropZone.classList.remove('hover');
+
+    const file = e.dataTransfer.files[0];
+    if (!file?.type.startsWith('image/')) {
+      return alert('Vui lòng thả một tệp ảnh.');
     }
 
-  } catch (err) {
-    alert("❌ Lỗi upload ảnh: " + err.message);
-    return null;
-  }
-}
+    preview.style.display = 'none';
+    imageInput.value = '';
 
+    const base64 = await getBase64FromFile(file);
+    if (!base64) return alert('❌ Lỗi đọc file ảnh');
 
-    // Xử lý kéo thả ảnh
-    dropZone.addEventListener('dragover', (e) => {
-      e.preventDefault();
-      dropZone.classList.add('hover');
-    });
+    const url = await uploadImage(base64, file.name);
+    if (!url) return;
 
-    dropZone.addEventListener('dragleave', () => {
-      dropZone.classList.remove('hover');
-    });
+    imageInput.value = url;
+    preview.src = url;
+    preview.style.display = 'block';
+  });
 
-    dropZone.addEventListener('drop', async (e) => {
-      e.preventDefault();
-      dropZone.classList.remove('hover');
+  // Submit form thêm sản phẩm
+  document.getElementById('product-form').addEventListener('submit', async e => {
+    e.preventDefault();
+    const name = document.getElementById('name').value.trim();
+    const price = +document.getElementById('price').value;
+    const quantity = +document.getElementById('quantity').value;
+    const images = document.getElementById('images').value.trim();
 
-      const file = e.dataTransfer.files[0];
-      if (!file || !file.type.startsWith('image/')) {
-        alert('Vui lòng thả một tệp ảnh.');
-        return;
+    if (!images) {
+      return alert('Vui lòng tải ảnh lên bằng cách kéo thả vào vùng trên.');
+    }
+
+    try {
+      const res = await fetch('https://backend-7j0i.onrender.com/products', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, price, quantity, images })
+      });
+      const result = await res.json();
+      if (res.ok) {
+        alert('✅ Thêm sản phẩm thành công!');
+        location.href = 'index.html';
+      } else {
+        alert('❌ Lỗi: ' + (result.message || 'Không thêm được sản phẩm'));
       }
-
-      preview.src = '';
-      preview.style.display = 'none';
-      imageInput.value = '';
-
-      const base64 = await getBase64FromFile(file);
-      if (!base64) {
-        alert('❌ Lỗi đọc file ảnh');
-        return;
-      }
-
-      const uploadedUrl = await uploadImage(base64, file.name);
-      if (!uploadedUrl) return;
-
-      imageInput.value = uploadedUrl;
-      preview.src = uploadedUrl;
-      preview.style.display = 'block';
-    });
-
-    // Thêm sản phẩm
-    document.getElementById('product-form').addEventListener('submit', async (e) => {
-      e.preventDefault();
-
-      const name = document.getElementById('name').value.trim();
-      const price = Number(document.getElementById('price').value);
-      const quantity = Number(document.getElementById('quantity').value);
-      const images = document.getElementById('images').value.trim();
-
-      if (!images) {
-        alert('Vui lòng tải ảnh lên bằng cách kéo thả ảnh vào vùng bên trên.');
-        return;
-      }
-
-     
-
-      try {
-        const res = await fetch('https://backend-7j0i.onrender.com/products', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify({ name, price, quantity, images }),
-        });
-
-        const result = await res.json();
-        if (res.ok) {
-          alert('✅ Thêm sản phẩm thành công!');
-          window.location.href = 'index.html';
-        } else {
-          alert('❌ Lỗi: ' + (result.message || 'Không thêm được sản phẩm'));
-        }
-      } catch (err) {
-        alert('❌ Lỗi kết nối: ' + err.message);
-      }
+    } catch (err) {
+      alert('❌ Lỗi kết nối: ' + err.message);
+    }
     });
   </script>
 </body>
