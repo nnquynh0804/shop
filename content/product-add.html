@@ -121,69 +121,59 @@
     const imageInput = document.getElementById('images');
     const preview = document.getElementById('preview');
 
-    // Hàm lấy base64 thuần từ file
+    // Hàm chuyển file thành base64
     function getBase64FromFile(file) {
       return new Promise((resolve, reject) => {
         const reader = new FileReader();
         reader.readAsDataURL(file);
         reader.onload = () => {
-          // Chuỗi dạng: data:image/png;base64,iVBORw0...
-          const base64String = reader.result.split(',')[1]; // lấy phần base64 thôi
+          const base64String = reader.result.split(',')[1];
           resolve(base64String);
         };
         reader.onerror = (error) => reject(error);
       });
     }
 
-    // Hàm upload base64 lên backend, trả về URL ảnh trên Github
+    // Upload ảnh dạng base64 lên backend
     async function uploadImage(base64, filename) {
-  try {
-    const res = await fetch('https://backend-7j0i.onrender.com/upload', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        filename,
-        imageBase64: base64,
-      }),
-    });
+      try {
+        const res = await fetch('https://backend-7j0i.onrender.com/upload', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            filename,
+            imageBase64: base64,
+          }),
+        });
 
-    const contentType = res.headers.get('content-type');
-    if (contentType && contentType.includes('application/json')) {
-      const data = await res.json();
-      console.log("Ảnh đã upload:", data);
-      return data;
-    } else {
-      const text = await res.text();
-      throw new Error("Backend trả về HTML hoặc lỗi: " + text);
-    }
-
-  } catch (err) {
-    alert("Lỗi kết nối upload ảnh: " + err.message);
-  }
-}
-
-
-        const data = await res.json();
-        if (res.ok && data.url) {
-          return data.url;
+        const contentType = res.headers.get('content-type');
+        if (contentType && contentType.includes('application/json')) {
+          const data = await res.json();
+          if (res.ok && data.url) {
+            return data.url;
+          } else {
+            alert('❌ Lỗi upload ảnh: ' + (data.error || 'Không rõ nguyên nhân'));
+            return null;
+          }
         } else {
-          alert('Lỗi upload ảnh: ' + JSON.stringify(data.error || data));
-          return null;
+          const text = await res.text();
+          throw new Error("Phản hồi không hợp lệ từ backend: " + text);
         }
-      } catch (error) {
-        alert('Lỗi kết nối upload ảnh: ' + error.message);
+      } catch (err) {
+        alert('❌ Lỗi kết nối upload ảnh: ' + err.message);
         return null;
       }
     }
 
+    // Xử lý kéo thả ảnh
     dropZone.addEventListener('dragover', (e) => {
       e.preventDefault();
       dropZone.classList.add('hover');
     });
 
-    dropZone.addEventListener('dragleave', (e) => {
+    dropZone.addEventListener('dragleave', () => {
       dropZone.classList.remove('hover');
     });
 
@@ -201,24 +191,21 @@
       preview.style.display = 'none';
       imageInput.value = '';
 
-      // Lấy base64
       const base64 = await getBase64FromFile(file);
       if (!base64) {
-        alert('Lỗi đọc file ảnh');
+        alert('❌ Lỗi đọc file ảnh');
         return;
       }
 
-      // Upload ảnh lên backend -> Github
       const uploadedUrl = await uploadImage(base64, file.name);
       if (!uploadedUrl) return;
 
-      // Gán URL ảnh vào input và hiển thị preview
       imageInput.value = uploadedUrl;
       preview.src = uploadedUrl;
       preview.style.display = 'block';
     });
 
-    // Xử lý submit form
+    // Thêm sản phẩm
     document.getElementById('product-form').addEventListener('submit', async (e) => {
       e.preventDefault();
 
@@ -232,8 +219,8 @@
         return;
       }
 
-      // Thêm token ở đây nếu cần
-      const token = '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'; // Thay token thật
+      const token = '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'; // 🔒 Điền token thật nếu cần xác thực
+
       try {
         const res = await fetch('https://backend-7j0i.onrender.com/products', {
           method: 'POST',
@@ -247,7 +234,7 @@
         const result = await res.json();
         if (res.ok) {
           alert('✅ Thêm sản phẩm thành công!');
-          window.location.href = 'products.html';
+          window.location.href = 'index.html';
         } else {
           alert('❌ Lỗi: ' + (result.message || 'Không thêm được sản phẩm'));
         }
