@@ -136,36 +136,37 @@
 
     // Upload ảnh dạng base64 lên backend
     async function uploadImage(base64, filename) {
-      try {
-        const res = await fetch('https://backend-7j0i.onrender.com/upload', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            filename,
-            imageBase64: base64,
-          }),
-        });
+  try {
+    const res = await fetch('https://backend-7j0i.onrender.com/upload', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        filename,
+        imageBase64: base64,
+      }),
+    });
 
-        const contentType = res.headers.get('content-type');
-        if (contentType && contentType.includes('application/json')) {
-          const data = await res.json();
-          if (res.ok && data.url) {
-            return data.url;
-          } else {
-            alert('❌ Lỗi upload ảnh: ' + (data.error || 'Không rõ nguyên nhân'));
-            return null;
-          }
-        } else {
-          const text = await res.text();
-          throw new Error("Phản hồi không hợp lệ từ backend: " + text);
-        }
-      } catch (err) {
-        alert('❌ Lỗi kết nối upload ảnh: ' + err.message);
+    const contentType = res.headers.get('content-type');
+    if (res.ok && contentType && contentType.includes('application/json')) {
+      const data = await res.json();
+      if (data.url) {
+        return data.url;
+      } else {
+        alert('❌ Upload thất bại: Không có URL trả về');
         return null;
       }
+    } else {
+      const text = await res.text();
+      throw new Error("Lỗi từ backend: " + text);
     }
+
+  } catch (err) {
+    alert("❌ Lỗi upload ảnh: " + err.message);
+    return null;
+  }
+}
 
     // Xử lý kéo thả ảnh
     dropZone.addEventListener('dragover', (e) => {
