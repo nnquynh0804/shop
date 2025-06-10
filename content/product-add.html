@@ -136,7 +136,7 @@
   // Gọi proxy API nội bộ để upload ảnh
   async function uploadImage(base64, filename) {
   try {
-    const res = await fetch('/api/upload-image', {
+    const res = await fetch('https://backend-7j0i.onrender.com/upload', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ filename, base64 })
