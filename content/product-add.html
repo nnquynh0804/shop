@@ -133,23 +133,6 @@
         reader.onerror = (error) => reject(error);
       });
     }
-
-    // Upload ảnh dạng base64 lên backend
-    <script>
-  const dropZone = document.getElementById('drop-zone');
-  const imageInput = document.getElementById('images');
-  const preview = document.getElementById('preview');
-
-  // Chuyển file thành base64
-  function getBase64FromFile(file) {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.readAsDataURL(file);
-      reader.onload = () => resolve(reader.result.split(',')[1]);
-      reader.onerror = err => reject(err);
-    });
-  }
-
   // Gọi proxy API nội bộ để upload ảnh
   async function uploadImage(base64, filename) {
     try {
