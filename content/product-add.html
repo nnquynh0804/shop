@@ -144,9 +144,10 @@
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({
-            filename,
-            contentBase64: base64,
-          }),
+        filename,
+        imageBase64: base64, // ✅ Sửa tên trường cho đúng với backend
+      }),
+
         });
 
         const data = await res.json();
