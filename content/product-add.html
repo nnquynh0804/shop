@@ -135,6 +135,7 @@
     }
 
     // Upload ảnh dạng base64 lên backend
+     const token = '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'; // 🔒 Điền token thật nếu cần xác thực
     async function uploadImage(base64, filename) {
   try {
     const res = await fetch('https://backend-7j0i.onrender.com/upload', {
@@ -222,7 +223,7 @@
         return;
       }
 
-      const token = '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'; // 🔒 Điền token thật nếu cần xác thực
+     
 
       try {
         const res = await fetch('https://backend-7j0i.onrender.com/products', {
