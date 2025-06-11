@@ -117,7 +117,7 @@
     const nameInput = document.getElementById('name');
     const priceInput = document.getElementById('price');
     const quantityInput = document.getElementById('quantity');
-    const imagesInput = document.getElementById('images');
+    const imagesInput = document.getElementById('imageUrl');
     const preview = document.getElementById('preview');
 
     async function fetchData() {
@@ -126,9 +126,9 @@
       nameInput.value = p.name || '';
       priceInput.value = p.price || 0;
       quantityInput.value = p.quantity || 0;
-      imagesInput.value = p.images || '';
-      if (p.images) {
-        preview.src = p.images;
+      imagesInput.value = p.imageUrl || '';
+      if (p.imageUrl) {
+        preview.src = p.imageUrl;
         preview.style.display = 'block';
       }
     }
