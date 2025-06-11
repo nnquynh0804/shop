@@ -1,179 +1,118 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-  <meta charset="UTF-8">
-  <title>Đơn hàng</title>
+  <meta charset="UTF-8" />
+  <title>Quản lý đơn hàng</title>
+  <link rel="stylesheet" href="style.css">
   <style>
-    body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      padding: 40px;
-      background: #f3eee7;
-      max-width: 1000px;
-      margin: auto;
-      color: #4e342e;
-    }
-
-    h1 {
-      text-align: center;
-      margin-bottom: 30px;
-      color: #5d4037;
-    }
-
-    label {
-      font-weight: bold;
-      display: block;
-      margin-bottom: 10px;
-      font-size: 16px;
-    }
-
-    select {
-      padding: 10px;
-      border-radius: 5px;
-      border: 1px solid #a1887f;
-      font-size: 15px;
-      width: 220px;
-      margin-bottom: 25px;
-      background-color: #efebe9;
-      color: #4e342e;
-    }
-
     table {
-      border-collapse: collapse;
       width: 100%;
-      background: #ffffff;
-      border-radius: 8px;
-      overflow: hidden;
-      box-shadow: 0 2px 10px rgba(78, 52, 46, 0.1);
+      border-collapse: collapse;
+      margin-top: 30px;
     }
 
     th, td {
-      padding: 14px 18px;
+      padding: 12px;
+      border: 1px solid #ccc;
       text-align: left;
     }
 
     th {
-      background-color: #6d4c41;
-      color: white;
-      font-weight: bold;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
+      background-color: #f0e5d8;
     }
 
-    tr:nth-child(even) {
-      background-color: #fbe9e7;
-    }
-
-    tr:hover {
-      background-color: #ffccbc;
-    }
-
-    button {
-      padding: 8px 14px;
-      background-color: #8d6e63;
+    .btn-action {
+      padding: 6px 12px;
       border: none;
+      background-color: #4CAF50;
       color: white;
       border-radius: 4px;
       cursor: pointer;
-      transition: background-color 0.2s ease;
     }
 
-    button:hover {
-      background-color: #795548;
-    }
-
-    .status-select {
-      width: 100%;
-      padding: 8px;
-      border-radius: 4px;
-      border: 1px solid #a1887f;
-      background-color: #efebe9;
-      color: #4e342e;
-    }
-
-    select:focus, button:focus {
-      outline: none;
-      border-color: #6d4c41;
+    .btn-action:hover {
+      background-color: #45a049;
     }
   </style>
 </head>
 <body>
-  <h1>🧾 Danh sách đơn hàng</h1>
+  <nav class="navbar">
+    <div class="logo">MintShop Admin</div>
+    <div class="nav-links" id="nav-auth-links"></div>
+  </nav>
 
-  <label>Lọc theo trạng thái:
-    <select id="status-filter">
-      <option value="">Tất cả</option>
-      <option value="PENDING">PENDING</option>
-      <option value="CONFIRMED">CONFIRMED</option>
-      <option value="SHIPPED">SHIPPED</option>
-      <option value="CANCELLED">CANCELLED</option>
-    </select>
-  </label>
+  <div class="container">
+    <h2>Danh sách đơn hàng</h2>
+    <table id="orders-table">
+      <thead>
+        <tr>
+          <th>Mã đơn</th>
+          <th>Tên khách</th>
+          <th>Sản phẩm</th>
+          <th>Tổng tiền</th>
+          <th>Trạng thái</th>
+          <th>Hành động</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- Đơn hàng render ở đây -->
+      </tbody>
+    </table>
+  </div>
 
-  <table>
-    <thead>
-      <tr>
-        <th>Mã</th>
-        <th>Khách hàng</th>
-        <th>Tổng tiền</th>
-        <th>Trạng thái</th>
-        <th>Hành động</th>
-      </tr>
-    </thead>
-    <tbody id="orders"></tbody>
-  </table>
-
+  <script src="scripts.js"></script>
   <script>
-    async function fetchOrders() {
-      const res = await fetch('https://backend-7j0i.onrender.com/orders', {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      const data = await res.json();
-      renderTable(data);
+    document.addEventListener('DOMContentLoaded', () => {
+      renderNavAuthLinks();
+      loadOrders();
+    });
+
+    function loadOrders() {
+      fetch('https://backend-7j0i.onrender.com/orders')
+        .then(res => res.json())
+        .then(data => {
+          const tbody = document.querySelector('#orders-table tbody');
+          tbody.innerHTML = '';
+
+          data.forEach(order => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+              <td>${order._id}</td>
+              <td>${order.customerName}</td>
+              <td>${order.items.map(item => `${item.name} x${item.quantity}`).join('<br>')}</td>
+              <td>${order.total.toLocaleString()}₫</td>
+              <td>${order.status}</td>
+              <td>
+                <button class="btn-action" onclick="updateOrderStatus('${order._id}', 'Đã xử lý')">✔ Xử lý</button>
+                <button class="btn-action" style="background-color:#e74c3c;" onclick="deleteOrder('${order._id}')">🗑 Xóa</button>
+              </td>
+            `;
+            tbody.appendChild(row);
+          });
+        })
+        .catch(err => {
+          console.error('Lỗi khi tải đơn hàng:', err);
+        });
     }
 
-    function renderTable(data) {
-      const tbody = document.getElementById('orders');
-      tbody.innerHTML = '';
-      const status = document.getElementById('status-filter').value;
-      const filtered = status ? data.filter(o => o.orderStatus === status) : data;
-
-      filtered.forEach(o => {
-        const tr = document.createElement('tr');
-        tr.innerHTML = `
-          <td>${o.orderCode}</td>
-          <td>${o.shippingAddress?.fullName || '-'}</td>
-          <td>${o.finalAmount.toLocaleString()}₫</td>
-          <td>
-            <select class="status-select" onchange="updateStatus('${o._id}', this.value)">
-              <option value="PENDING" ${o.orderStatus === 'PENDING' ? 'selected' : ''}>PENDING</option>
-              <option value="CONFIRMED" ${o.orderStatus === 'CONFIRMED' ? 'selected' : ''}>CONFIRMED</option>
-              <option value="SHIPPED" ${o.orderStatus === 'SHIPPED' ? 'selected' : ''}>SHIPPED</option>
-              <option value="CANCELLED" ${o.orderStatus === 'CANCELLED' ? 'selected' : ''}>CANCELLED</option>
-            </select>
-          </td>
-          <td><button onclick="edit('${o._id}')">✏️ Sửa</button></td>
-        `;
-        tbody.appendChild(tr);
-      });
-    }
-
-    async function updateStatus(id, status) {
-      await fetch(`https://backend-7j0i.onrender.com/orders/${id}`, {
+    function updateOrderStatus(orderId, status) {
+      fetch(`https://backend-7j0i.onrender.com/orders/${orderId}`, {
         method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`
-        },
-        body: JSON.stringify({ orderStatus: status })
-      });
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status })
+      })
+      .then(res => res.json())
+      .then(() => loadOrders());
     }
 
-    function edit(id) {
-      window.location.href = `order-edit.html?id=${id}`;
+    function deleteOrder(orderId) {
+      if (confirm('Bạn có chắc muốn xóa đơn hàng này?')) {
+        fetch(`https://backend-7j0i.onrender.com/orders/${orderId}`, {
+          method: 'DELETE'
+        })
+        .then(() => loadOrders());
+      }
     }
-
-    document.getElementById('status-filter').addEventListener('change', fetchOrders);
-    fetchOrders();
   </script>
 </body>
 </html>
