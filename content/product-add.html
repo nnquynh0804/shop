@@ -33,7 +33,8 @@
       color: #5a3e2b;
     }
     input[type="text"],
-    input[type="number"] {
+    input[type="number"],
+    input[type="file"] {
       width: 100%;
       padding: 10px 12px;
       margin-top: 6px;
@@ -107,10 +108,13 @@
     <label>📦 Số lượng</label>
     <input type="number" id="quantity" required />
 
-    <label>🖼️ Ảnh minh họa (URL tự động sau khi upload)</label>
+    <label>🖼️ Ảnh minh họa</label>
     <input type="text" id="images" placeholder="https://..." required readonly />
 
-    <div id="drop-zone">📥 Kéo và thả ảnh vào đây</div>
+    <label for="fileInput">📤 Chọn ảnh từ máy tính</label>
+    <input type="file" id="fileInput" accept="image/*" />
+
+    <div id="drop-zone">📥 Hoặc kéo và thả ảnh vào đây</div>
     <img id="preview" src="#" alt="Ảnh minh họa" />
 
     <button type="submit">➕ Thêm sản phẩm</button>
@@ -119,11 +123,11 @@
   <script>
     const dropZone = document.getElementById('drop-zone');
     const imageInput = document.getElementById('images');
+    const fileInput = document.getElementById('fileInput');
     const preview = document.getElementById('preview');
 
-    // ✅ Thay bằng cloud_name và preset thực tế của bạn:
-    const CLOUD_NAME = 'duuhiiwlu'; // ví dụ: 'myshopcloud'
-    const UPLOAD_PRESET = 'unsigned_preset'; // preset không cần ký
+    const CLOUD_NAME = 'duuhiiwlu';
+    const UPLOAD_PRESET = 'unsigned_preset';
 
     async function uploadImageToCloudinary(file) {
       const formData = new FormData();
@@ -149,20 +153,9 @@
       }
     }
 
-    dropZone.addEventListener('dragover', e => {
-      e.preventDefault();
-      dropZone.classList.add('hover');
-    });
-
-    dropZone.addEventListener('dragleave', () => dropZone.classList.remove('hover'));
-
-    dropZone.addEventListener('drop', async e => {
-      e.preventDefault();
-      dropZone.classList.remove('hover');
-
-      const file = e.dataTransfer.files[0];
+    async function handleFileUpload(file) {
       if (!file?.type.startsWith('image/')) {
-        return alert('Vui lòng thả một tệp ảnh.');
+        return alert('Vui lòng chọn tệp ảnh.');
       }
 
       preview.style.display = 'none';
@@ -174,6 +167,27 @@
       imageInput.value = url;
       preview.src = url;
       preview.style.display = 'block';
+    }
+
+    // Kéo và thả
+    dropZone.addEventListener('dragover', e => {
+      e.preventDefault();
+      dropZone.classList.add('hover');
+    });
+
+    dropZone.addEventListener('dragleave', () => dropZone.classList.remove('hover'));
+
+    dropZone.addEventListener('drop', async e => {
+      e.preventDefault();
+      dropZone.classList.remove('hover');
+      const file = e.dataTransfer.files[0];
+      await handleFileUpload(file);
+    });
+
+    // Chọn file
+    fileInput.addEventListener('change', async e => {
+      const file = e.target.files[0];
+      await handleFileUpload(file);
     });
 
     document.getElementById('product-form').addEventListener('submit', async e => {
