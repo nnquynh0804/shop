@@ -27,6 +27,23 @@ body {
   cursor: pointer;
   transition: background-color 0.3s ease;
 }
+#orders-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+#orders-table th, #orders-table td {
+  border: 1px solid #ddd;
+  padding: 10px;
+  text-align: center;
+  vertical-align: middle;
+  white-space: nowrap;
+}
+
+#orders-table td:nth-child(3) {
+  white-space: normal;
+  word-break: break-word;
+}
 
 .add-to-cart {
   background-color: #3e2c23;
