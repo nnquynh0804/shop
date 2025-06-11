@@ -107,7 +107,7 @@
     <label>📦 Số lượng</label>
     <input type="number" id="quantity" required />
 
-    <label>🖼️ Ảnh minh họa (URL hoặc kéo ảnh vào)</label>
+    <label>🖼️ Ảnh minh họa (URL tự động sau khi upload)</label>
     <input type="text" id="images" placeholder="https://..." required readonly />
 
     <div id="drop-zone">📥 Kéo và thả ảnh vào đây</div>
@@ -121,109 +121,89 @@
     const imageInput = document.getElementById('images');
     const preview = document.getElementById('preview');
 
-    // Hàm chuyển file thành base64
-    function getBase64FromFile(file) {
-      return new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.readAsDataURL(file);
-        reader.onload = () => {
-          const base64String = reader.result.split(',')[1];
-          resolve(base64String);
-        };
-        reader.onerror = (error) => reject(error);
-      });
+    // ✅ Thay bằng cloud_name và preset thực tế của bạn:
+    const CLOUD_NAME = 'duuhiiwlu'; // ví dụ: 'myshopcloud'
+    const UPLOAD_PRESET = 'unsigned_preset'; // preset không cần ký
+
+    async function uploadImageToCloudinary(file) {
+      const formData = new FormData();
+      formData.append('file', file);
+      formData.append('upload_preset', UPLOAD_PRESET);
+
+      try {
+        const res = await fetch(`https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`, {
+          method: 'POST',
+          body: formData
+        });
+
+        const data = await res.json();
+        if (res.ok && data.secure_url) {
+          return data.secure_url;
+        } else {
+          throw new Error(data.error?.message || 'Upload thất bại');
+        }
+      } catch (err) {
+        console.error('Upload lỗi:', err);
+        alert('❌ Upload ảnh thất bại: ' + err.message);
+        return null;
+      }
     }
-  // Gọi proxy API nội bộ để upload ảnh
-  async function uploadImage(base64, filename) {
-  try {
-    const res = await fetch('https://backend-7j0i.onrender.com/upload', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ filename, imageBase64: base64 })
+
+    dropZone.addEventListener('dragover', e => {
+      e.preventDefault();
+      dropZone.classList.add('hover');
     });
 
-    // Cố gắng parse JSON từ response
-    let data;
-    try {
-      data = await res.json();
-    } catch {
-      throw new Error(`Server trả về không phải JSON (status ${res.status})`);
-    }
+    dropZone.addEventListener('dragleave', () => dropZone.classList.remove('hover'));
 
-    if (res.ok && data.url) {
-      return data.url;
-    } else {
-      // Nếu có trường error, lấy ra; nếu không, hiển thị toàn bộ data
-      const msg = data.error || JSON.stringify(data);
-      throw new Error(`Upload thất bại (${res.status}): ${msg}`);
-    }
+    dropZone.addEventListener('drop', async e => {
+      e.preventDefault();
+      dropZone.classList.remove('hover');
 
-  } catch (err) {
-    // log xuống console để dễ debug
-    console.error('uploadImage error:', err);
-    alert('❌ Lỗi upload ảnh: ' + err.message);
-    return null;
-  }
-}
-
-
-  // Xử lý drag & drop
-  dropZone.addEventListener('dragover', e => {
-    e.preventDefault();
-    dropZone.classList.add('hover');
-  });
-  dropZone.addEventListener('dragleave', () => dropZone.classList.remove('hover'));
-  dropZone.addEventListener('drop', async e => {
-    e.preventDefault();
-    dropZone.classList.remove('hover');
-
-    const file = e.dataTransfer.files[0];
-    if (!file?.type.startsWith('image/')) {
-      return alert('Vui lòng thả một tệp ảnh.');
-    }
-
-    preview.style.display = 'none';
-    imageInput.value = '';
-
-    const base64 = await getBase64FromFile(file);
-    if (!base64) return alert('❌ Lỗi đọc file ảnh');
-
-    const url = await uploadImage(base64, file.name);
-    if (!url) return;
-
-    imageInput.value = url;
-    preview.src = url;
-    preview.style.display = 'block';
-  });
-
-  // Submit form thêm sản phẩm
-  document.getElementById('product-form').addEventListener('submit', async e => {
-    e.preventDefault();
-    const name = document.getElementById('name').value.trim();
-    const price = +document.getElementById('price').value;
-    const quantity = +document.getElementById('quantity').value;
-    const images = document.getElementById('images').value.trim();
-
-    if (!images) {
-      return alert('Vui lòng tải ảnh lên bằng cách kéo thả vào vùng trên.');
-    }
-
-    try {
-      const res = await fetch('https://backend-7j0i.onrender.com/products', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name, price, quantity, images })
-      });
-      const result = await res.json();
-      if (res.ok) {
-        alert('✅ Thêm sản phẩm thành công!');
-        location.href = 'index.html';
-      } else {
-        alert('❌ Lỗi: ' + (result.message || 'Không thêm được sản phẩm'));
+      const file = e.dataTransfer.files[0];
+      if (!file?.type.startsWith('image/')) {
+        return alert('Vui lòng thả một tệp ảnh.');
       }
-    } catch (err) {
-      alert('❌ Lỗi kết nối: ' + err.message);
-    }
+
+      preview.style.display = 'none';
+      imageInput.value = '';
+
+      const url = await uploadImageToCloudinary(file);
+      if (!url) return;
+
+      imageInput.value = url;
+      preview.src = url;
+      preview.style.display = 'block';
+    });
+
+    document.getElementById('product-form').addEventListener('submit', async e => {
+      e.preventDefault();
+      const name = document.getElementById('name').value.trim();
+      const price = +document.getElementById('price').value;
+      const quantity = +document.getElementById('quantity').value;
+      const images = document.getElementById('images').value.trim();
+
+      if (!images) {
+        return alert('Vui lòng tải ảnh lên trước.');
+      }
+
+      try {
+        const res = await fetch('https://backend-7j0i.onrender.com/products', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ name, price, quantity, images })
+        });
+
+        const result = await res.json();
+        if (res.ok) {
+          alert('✅ Thêm sản phẩm thành công!');
+          location.href = 'index.html';
+        } else {
+          alert('❌ Lỗi: ' + (result.message || 'Không thêm được sản phẩm'));
+        }
+      } catch (err) {
+        alert('❌ Lỗi kết nối: ' + err.message);
+      }
     });
   </script>
 </body>
