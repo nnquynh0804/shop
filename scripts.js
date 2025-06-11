@@ -23,7 +23,7 @@ let cart = JSON.parse(localStorage.getItem('cart')) || [];
 
 // ✅ Xóa các item không có productId (tránh lỗi khi submit)
 cart = cart.filter(item => item.productId);
-localStorage.setItem('cart', JSON.stringify(cart));
+sessionStorage.setItem('cart', JSON.stringify(cart));
 
 function renderCart() {
   if (!cartItemsEl) return;
@@ -54,19 +54,19 @@ function renderCart() {
 
 function increaseQty(index) {
   cart[index].qty++;
-  localStorage.setItem('cart', JSON.stringify(cart));
+  sessionStorage.setItem('cart', JSON.stringify(cart));
   renderCart();
 }
 function removeItem(index) {
   cart.splice(index, 1);
-  localStorage.setItem('cart', JSON.stringify(cart));
+  sessionStorage.setItem('cart', JSON.stringify(cart));
   renderCart();
 }
 function decreaseQty(index) {
   if (cart[index].qty > 1) {
     cart[index].qty--;
   }
-  localStorage.setItem('cart', JSON.stringify(cart));
+  sessionStorage.setItem('cart', JSON.stringify(cart));
   renderCart();
 }
 
@@ -174,13 +174,9 @@ if (closeCartBtn && cartModal) {
 // Sự kiện thanh toán
 if (checkoutBtn) {
   checkoutBtn.addEventListener('click', () => {
-    localStorage.setItem('cart', JSON.stringify(cart));
-    const token = localStorage.getItem('token');
-    if (!token) {
-      window.location.href = 'login.html';
-    } else {
-      window.location.href = 'thanhtoan.html';
-    }
+    sessionStorage.setItem('cart', JSON.stringify(cart));
+    const token = sessionStorage.getItem('token');
+    window.location.href = 'thanhtoan.html';
   });
 }
 
@@ -193,13 +189,6 @@ if (confirmCheckoutBtn) {
     const address = document.getElementById('address')?.value;
     if (!fullName || !phone || !address) {
       alert("Vui lòng nhập đầy đủ thông tin giao hàng");
-      return;
-    }
-
-    const token = localStorage.getItem('token');
-    if (!token) {
-      alert("Bạn cần đăng nhập để thanh toán");
-      window.location.href = 'login.html';
       return;
     }
 
@@ -263,10 +252,10 @@ if (confirmCheckoutBtn) {
 // Hiển thị nav
 function renderNavAuthLinks() {
   const nav = document.getElementById('nav-auth-links');
-  const token = localStorage.getItem('token');
+  const token = sessionStorage.getItem('token');
   if (!nav) return;
   if (token) {
-    const userName = localStorage.getItem('userName') || 'Khách';
+    const userName = sessionStorage.getItem('userName') || 'Khách';
     nav.innerHTML = `
       <span>👋 Xin chào, ${userName}</span>
       <a href="#" onclick="logout()">Đăng xuất</a>
@@ -280,9 +269,9 @@ function renderNavAuthLinks() {
 }
 
 function logout() {
-  localStorage.removeItem('token');
-  localStorage.removeItem('role');
-  localStorage.removeItem('userName');
+  sessionStorage.removeItem('token');
+  sessionStorage.removeItem('role');
+  sessionStorage.removeItem('userName');
   window.location.reload();
 }
 
