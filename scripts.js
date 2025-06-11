@@ -253,6 +253,7 @@ if (confirmCheckoutBtn) {
 function renderNavAuthLinks() {
   const nav = document.getElementById('nav-auth-links');
   const token = sessionStorage.getItem('token');
+  const role = sessionStorage.getItem('role'); // Lấy role từ session
 
   if (!nav) return;
 
@@ -273,7 +274,7 @@ function renderNavAuthLinks() {
     `;
     return;
   }
-  else{
+
   // Nếu là người dùng bình thường
   const userName = sessionStorage.getItem('userName') || 'Khách';
   nav.innerHTML = `
@@ -281,7 +282,7 @@ function renderNavAuthLinks() {
     <a href="#" onclick="logout()">Đăng xuất</a>
   `;
 }
-}
+
 
 
 function logout() {
