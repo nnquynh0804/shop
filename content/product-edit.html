@@ -161,7 +161,7 @@
 
     // Dropzone cấu hình Cloudinary
     const myDropzone = new Dropzone("#my-dropzone", {
-      url: "https://api.cloudinary.com/v1_1/YOUR_CLOUD_NAME/image/upload",
+      url: "https://api.cloudinary.com/v1_1/duuhiiwlu/image/upload",
       method: "post",
       paramName: "file",
       maxFiles: 1,
@@ -169,7 +169,7 @@
       addRemoveLinks: true,
       init: function () {
         this.on("sending", function (file, xhr, formData) {
-          formData.append("upload_preset", "YOUR_UPLOAD_PRESET");
+          formData.append("upload_preset", "unsigned_preset");
         });
 
         this.on("success", function (file, response) {
