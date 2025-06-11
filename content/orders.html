@@ -58,57 +58,78 @@
 
   <script src="scripts.js"></script>
   <script>
-    document.addEventListener('DOMContentLoaded', () => {
-      renderNavAuthLinks();
-      loadOrders();
-    });
+  document.addEventListener('DOMContentLoaded', () => {
+    const role = sessionStorage.getItem('role');
+    
+    if (role === 'admin') {
+      // Hiển thị admin-controls
+      const adminControls = document.getElementById('admin-controls');
+      if (adminControls) {
+        adminControls.style.display = 'block';
+      }
 
-    function loadOrders() {
-      fetch('https://backend-7j0i.onrender.com/orders')
-        .then(res => res.json())
-        .then(data => {
-          const tbody = document.querySelector('#orders-table tbody');
-          tbody.innerHTML = '';
-
-          data.forEach(order => {
-            const row = document.createElement('tr');
-            row.innerHTML = `
-              <td>${order._id}</td>
-              <td>${order.customerName}</td>
-              <td>${order.items.map(item => `${item.name} x${item.quantity}`).join('<br>')}</td>
-              <td>${order.total.toLocaleString()}₫</td>
-              <td>${order.status}</td>
-              <td>
-                <button class="btn-action" onclick="updateOrderStatus('${order._id}', 'Đã xử lý')">✔ Xử lý</button>
-                <button class="btn-action" style="background-color:#e74c3c;" onclick="deleteOrder('${order._id}')">🗑 Xóa</button>
-              </td>
-            `;
-            tbody.appendChild(row);
-          });
-        })
-        .catch(err => {
-          console.error('Lỗi khi tải đơn hàng:', err);
-        });
-    }
-
-    function updateOrderStatus(orderId, status) {
-      fetch(`https://backend-7j0i.onrender.com/orders/${orderId}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ status })
-      })
-      .then(res => res.json())
-      .then(() => loadOrders());
-    }
-
-    function deleteOrder(orderId) {
-      if (confirm('Bạn có chắc muốn xóa đơn hàng này?')) {
-        fetch(`https://backend-7j0i.onrender.com/orders/${orderId}`, {
-          method: 'DELETE'
-        })
-        .then(() => loadOrders());
+      // Hiển thị phần quản lý đơn hàng
+      const orderSection = document.getElementById('admin-orders-section');
+      if (orderSection) {
+        orderSection.style.display = 'block';
+        loadOrders();
       }
     }
-  </script>
+  });
+
+  function loadOrders() {
+  fetch('https://backend-7j0i.onrender.com/orders')
+    .then(res => res.json())
+    .then(data => {
+      const tbody = document.querySelector('#orders-table tbody');
+      tbody.innerHTML = '';
+
+      if (!Array.isArray(data) || data.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="6">Không có đơn hàng nào.</td></tr>';
+        return;
+      }
+
+      data.forEach(order => {
+        const row = document.createElement('tr');
+        const itemsHTML = order.items.map(item => `${item.productName} x${item.quantity}`).join('<br>');
+
+        row.innerHTML = `
+          <td>${order._id}</td>
+          <td>${order.shippingAddress.fullName}</td>
+          <td>${itemsHTML}</td>
+          <td>${order.totalAmount.toLocaleString()}₫</td>
+          <td>${order.orderStatus}</td>
+          <td>
+            <button onclick="updateOrder('${order._id}', 'Đã xử lý')">✔</button>
+            <button onclick="deleteOrder('${order._id}')">🗑</button>
+          </td>
+        `;
+        tbody.appendChild(row);
+      });
+    })
+    .catch(err => {
+      console.error('Lỗi khi tải đơn hàng:', err);
+    });
+}
+
+
+  function updateOrder(orderId, status) {
+    fetch(`https://backend-7j0i.onrender.com/orders/${orderId}`, {
+      method: 'PUT',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({ status })
+    })
+    .then(() => loadOrders());
+  }
+
+  function deleteOrder(orderId) {
+    if (confirm('Bạn có chắc chắn muốn xóa đơn hàng này không?')) {
+      fetch(`https://backend-7j0i.onrender.com/orders/${orderId}`, {
+        method: 'DELETE'
+      })
+      .then(() => loadOrders());
+    }
+  }
+</script>
 </body>
 </html>
