@@ -266,7 +266,7 @@ function renderNavAuthLinks() {
   }
 
   // Nếu là admin
-  if (token === 'admin') {
+  if (token === 'Admin User') {
     nav.innerHTML = `
       <a href="./content/orders.html">Quản lý đơn hàng</a>
       <a href="#" onclick="logout()">Đăng xuất</a>
