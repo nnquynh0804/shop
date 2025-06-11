@@ -42,94 +42,123 @@
   </nav>
 
   <div class="section-title">Quản lý đơn hàng</div>
-    <table id="orders-table" style="width:100%; border-collapse: collapse; margin-top: 1em;">
-      <thead>
-        <tr style="background-color: #f0e5d8;">
-          <th>Mã đơn</th>
-          <th>Khách hàng</th>
-          <th>Sản phẩm</th>
-          <th>Tổng tiền</th>
-          <th>Trạng thái</th>
-          <th>Hành động</th>
-        </tr>
-      </thead>
-      <tbody></tbody>
-    </table>
+  <table id="orders-table" style="width:100%; border-collapse: collapse; margin-top: 1em;">
+    <thead>
+      <tr style="background-color: #f0e5d8;">
+        <th>Mã đơn</th>
+        <th>Khách hàng</th>
+        <th>Sản phẩm</th>
+        <th>Tổng tiền</th>
+        <th>Trạng thái</th>
+        <th>Hành động</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
 
   <script src="scripts.js"></script>
   <script>
-  document.addEventListener('DOMContentLoaded', () => {
-    const role = sessionStorage.getItem('role');
-    
-    if (role === 'admin') {
-      // Hiển thị admin-controls
-      const adminControls = document.getElementById('admin-controls');
-      if (adminControls) {
-        adminControls.style.display = 'block';
-      }
+    document.addEventListener('DOMContentLoaded', () => {
+      renderNavAuthLinks();
 
-      // Hiển thị phần quản lý đơn hàng
-      const orderSection = document.getElementById('admin-orders-section');
-      if (orderSection) {
-        orderSection.style.display = 'block';
-        loadOrders();
-      }
-    }
-  });
+      const role = sessionStorage.getItem('role');
 
-  function loadOrders() {
-  fetch('https://backend-7j0i.onrender.com/orders')
-    .then(res => res.json())
-    .then(data => {
-      const tbody = document.querySelector('#orders-table tbody');
-      tbody.innerHTML = '';
-
-      if (!Array.isArray(data) || data.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="6">Không có đơn hàng nào.</td></tr>';
+      if (role !== 'admin') {
+        alert('Bạn không có quyền truy cập trang này.');
+        window.location.href = 'index.html';
         return;
       }
 
-      data.forEach(order => {
-        const row = document.createElement('tr');
-        const itemsHTML = order.items.map(item => `${item.productName} x${item.quantity}`).join('<br>');
-
-        row.innerHTML = `
-          <td>${order._id}</td>
-          <td>${order.shippingAddress.fullName}</td>
-          <td>${itemsHTML}</td>
-          <td>${order.totalAmount.toLocaleString()}₫</td>
-          <td>${order.orderStatus}</td>
-          <td>
-            <button onclick="updateOrder('${order._id}', 'Đã xử lý')">✔</button>
-            <button onclick="deleteOrder('${order._id}')">🗑</button>
-          </td>
-        `;
-        tbody.appendChild(row);
-      });
-    })
-    .catch(err => {
-      console.error('Lỗi khi tải đơn hàng:', err);
+      loadOrders();
     });
-}
 
+    function renderNavAuthLinks() {
+      const nav = document.getElementById('nav-auth-links');
+      const token = sessionStorage.getItem('token');
+      const role = sessionStorage.getItem('role');
 
-  function updateOrder(orderId, status) {
-    fetch(`https://backend-7j0i.onrender.com/orders/${orderId}`, {
-      method: 'PUT',
-      headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({ status })
-    })
-    .then(() => loadOrders());
-  }
+      if (!nav) return;
 
-  function deleteOrder(orderId) {
-    if (confirm('Bạn có chắc chắn muốn xóa đơn hàng này không?')) {
+      if (!token) {
+        nav.innerHTML = `
+          <a href="login.html">Đăng nhập</a>
+          <a href="register.html">Đăng ký</a>
+        `;
+        return;
+      }
+
+      if (role === 'admin') {
+        nav.innerHTML = `
+          <a href="./content/orders.html">Quản lý đơn hàng</a>
+          <a href="#" onclick="logout()">Đăng xuất</a>
+        `;
+        return;
+      }
+
+      const userName = sessionStorage.getItem('userName') || 'Khách';
+      nav.innerHTML = `
+        <span>👋 Xin chào, ${userName}</span>
+        <a href="#" onclick="logout()">Đăng xuất</a>
+      `;
+    }
+
+    function logout() {
+      sessionStorage.clear();
+      window.location.href = 'index.html';
+    }
+
+    function loadOrders() {
+      fetch('https://backend-7j0i.onrender.com/orders')
+        .then(res => res.json())
+        .then(data => {
+          const tbody = document.querySelector('#orders-table tbody');
+          tbody.innerHTML = '';
+
+          if (!Array.isArray(data) || data.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="6">Không có đơn hàng nào.</td></tr>';
+            return;
+          }
+
+          data.forEach(order => {
+            const row = document.createElement('tr');
+            const itemsHTML = order.items.map(item => `${item.productName} x${item.quantity}`).join('<br>');
+
+            row.innerHTML = `
+              <td>${order._id}</td>
+              <td>${order.shippingAddress.fullName}</td>
+              <td>${itemsHTML}</td>
+              <td>${order.totalAmount.toLocaleString()}₫</td>
+              <td>${order.orderStatus}</td>
+              <td>
+                <button class="btn-action" onclick="updateOrder('${order._id}', 'Đã xử lý')">✔</button>
+                <button class="btn-action" onclick="deleteOrder('${order._id}')">🗑</button>
+              </td>
+            `;
+            tbody.appendChild(row);
+          });
+        })
+        .catch(err => {
+          console.error('Lỗi khi tải đơn hàng:', err);
+        });
+    }
+
+    function updateOrder(orderId, status) {
       fetch(`https://backend-7j0i.onrender.com/orders/${orderId}`, {
-        method: 'DELETE'
+        method: 'PUT',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({ status })
       })
       .then(() => loadOrders());
     }
-  }
-</script>
+
+    function deleteOrder(orderId) {
+      if (confirm('Bạn có chắc chắn muốn xóa đơn hàng này không?')) {
+        fetch(`https://backend-7j0i.onrender.com/orders/${orderId}`, {
+          method: 'DELETE'
+        })
+        .then(() => loadOrders());
+      }
+    }
+  </script>
 </body>
 </html>
