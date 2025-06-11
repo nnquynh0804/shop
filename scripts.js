@@ -134,6 +134,27 @@ async function fetchAndRenderProducts() {
 function editProduct(productId) {
   window.location.href = `./content/product-edit.html?id=${productId}`;
 }
+async function deleteProduct(productId) {
+  const confirmed = confirm('❗Bạn có chắc muốn xóa sản phẩm này không?');
+  if (!confirmed) return;
+
+  try {
+    const res = await fetch(`https://backend-7j0i.onrender.com/products/${productId}`, {
+      method: 'DELETE'
+    });
+
+    if (res.ok) {
+      alert('✅ Đã xóa sản phẩm!');
+      fetchAndRenderProducts(); // Load lại danh sách sản phẩm
+    } else {
+      const result = await res.json();
+      alert('❌ Không thể xóa: ' + (result.message || 'Lỗi không xác định'));
+    }
+  } catch (err) {
+    alert('❌ Lỗi kết nối khi xóa sản phẩm!');
+    console.error(err);
+  }
+}
 
 
 function attachAddToCartListeners() {
