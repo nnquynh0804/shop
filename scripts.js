@@ -95,7 +95,7 @@ async function fetchAndRenderProducts() {
         data-id="${product._id}"
         data-name="${product.name}"
         data-price="${product.price}"
-        data-src="${product.images}">
+        data-src="${product.imageUrl}">
         Thêm vào giỏ
       </button>
     `;
