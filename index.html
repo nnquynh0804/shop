@@ -109,34 +109,41 @@
     }
   });
 
-   function loadOrders() {
-      console.log('Bắt đầu tải đơn hàng...');
-      fetch('https://backend-7j0i.onrender.com/orders')
-        .then(res => res.json())
-        .then(data => {
-          const tbody = document.querySelector('#orders-table tbody');
-          tbody.innerHTML = '';
+  function loadOrders() {
+  fetch('https://backend-7j0i.onrender.com/orders')
+    .then(res => res.json())
+    .then(data => {
+      const tbody = document.querySelector('#orders-table tbody');
+      tbody.innerHTML = '';
 
-          data.forEach(order => {
-            const row = document.createElement('tr');
-            row.innerHTML = `
-              <td>${order._id}</td>
-              <td>${order.customerName}</td>
-              <td>${order.items.map(item => `${item.name} x${item.quantity}`).join('<br>')}</td>
-              <td>${order.total.toLocaleString()}₫</td>
-              <td>${order.status}</td>
-              <td>
-                <button class="btn-action" onclick="updateOrderStatus('${order._id}', 'Đã xử lý')">✔ Xử lý</button>
-                <button class="btn-action" style="background-color:#e74c3c;" onclick="deleteOrder('${order._id}')">🗑 Xóa</button>
-              </td>
-            `;
-            tbody.appendChild(row);
-          });
-        })
-        .catch(err => {
-          console.error('Lỗi khi tải đơn hàng:', err);
-        });
-    }
+      if (!Array.isArray(data) || data.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="6">Không có đơn hàng nào.</td></tr>';
+        return;
+      }
+
+      data.forEach(order => {
+        const row = document.createElement('tr');
+        const itemsHTML = order.items.map(item => `${item.productName} x${item.quantity}`).join('<br>');
+
+        row.innerHTML = `
+          <td>${order._id}</td>
+          <td>${order.shippingAddress.fullName}</td>
+          <td>${itemsHTML}</td>
+          <td>${order.totalAmount.toLocaleString()}₫</td>
+          <td>${order.orderStatus}</td>
+          <td>
+            <button onclick="updateOrder('${order._id}', 'Đã xử lý')">✔</button>
+            <button onclick="deleteOrder('${order._id}')">🗑</button>
+          </td>
+        `;
+        tbody.appendChild(row);
+      });
+    })
+    .catch(err => {
+      console.error('Lỗi khi tải đơn hàng:', err);
+    });
+}
+
 
   function updateOrder(orderId, status) {
     fetch(`https://backend-7j0i.onrender.com/orders/${orderId}`, {
