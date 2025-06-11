@@ -19,7 +19,7 @@ const cartCount = document.getElementById('cart-count');
 const cartTotal = document.getElementById('cart-total');
 const checkoutBtn = document.getElementById('checkout-btn');
 
-let cart = JSON.parse(localStorage.getItem('cart')) || [];
+let cart = JSON.parse(sessionStorage.getItem('cart')) || [];
 
 // ✅ Xóa các item không có productId (tránh lỗi khi submit)
 cart = cart.filter(item => item.productId);
