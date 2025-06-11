@@ -89,7 +89,7 @@
     .then(data => document.getElementById('footer-container').innerHTML = data);
 
   // Hiển thị admin-controls nếu là admin
-  const role = localStorage.getItem('role');
+  const role = sessionStorage.getItem('role');
   if (role === 'admin') {
     document.addEventListener('DOMContentLoaded', () => {
       const adminControls = document.getElementById('admin-controls');
