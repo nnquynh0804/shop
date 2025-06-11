@@ -14,9 +14,9 @@ document.getElementById('login-form').addEventListener('submit', async (e) => {
 
     const result = await res.json();
     if (res.ok) {
-      localStorage.setItem('token', result.token);
-      localStorage.setItem('role', result.role);
-      localStorage.setItem('userName', result.fullName || 'User');
+      sessionStorage.setItem('token', result.token);
+      sessionStorage.setItem('role', result.role);
+      sessionStorage.setItem('userName', result.fullName || 'User');
     
       window.location.href = '/index.html'; // 👉 Trang quản lý dành cho admin
     
