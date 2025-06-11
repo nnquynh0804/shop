@@ -195,7 +195,7 @@
       const name = document.getElementById('name').value.trim();
       const price = +document.getElementById('price').value;
       const quantity = +document.getElementById('quantity').value;
-      const images = document.getElementById('images').value.trim();
+      const imageUrl = document.getElementById('images').value.trim();
 
       if (!images) {
         return alert('Vui lòng tải ảnh lên trước.');
@@ -205,7 +205,7 @@
         const res = await fetch('https://backend-7j0i.onrender.com/products', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ name, price, quantity, images })
+          body: JSON.stringify({ name, price, quantity, imageUrl })
         });
 
         const result = await res.json();
