@@ -94,7 +94,7 @@
       .then(res => res.json())
       .then(product => {
         container.innerHTML = `
-          <img src="${product.images}" alt="${product.name}" class="product-img" />
+          <img src="${product.imageUrl}" alt="${product.name}" class="product-img" />
           <div class="product-info">
             <div class="product-name">${product.name}</div>
             <div class="product-price">${product.price.toLocaleString()}₫</div>
