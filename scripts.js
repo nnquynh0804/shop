@@ -281,6 +281,7 @@ function renderNavAuthLinks() {
     <a href="#" onclick="logout()">Đăng xuất</a>
   `;
 }
+}
 
 
 function logout() {
