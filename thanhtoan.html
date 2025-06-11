@@ -164,7 +164,7 @@
     const confirmBtn = document.getElementById('confirm-btn');
     const paidBtn = document.getElementById('paid-btn');
 
-    const cartData = localStorage.getItem('cart');
+    const cartData = sessionStorage.getItem('cart');
     if (cartData) {
       const cart = JSON.parse(cartData);
       container.innerHTML = '';
@@ -220,12 +220,6 @@
           return;
         }
 
-        if (!token) {
-          alert('Bạn cần đăng nhập để thanh toán.');
-          window.location.href = 'login.html';
-          return;
-        }
-
         if (!cart.length) {
           alert('Giỏ hàng trống.');
           return;
@@ -266,8 +260,8 @@
           const result = await res.json();
           if (res.status === 200 || res.status === 201) {
   alert('✅ Đặt hàng thành công!');
-  localStorage.setItem('lastOrderCode', order.orderCode);
-  localStorage.removeItem('cart');
+  sessionStorage.setItem('lastOrderCode', order.orderCode);
+  sessionStorage.removeItem('cart');
   window.location.href = 'thankyou.html';
 } else {
   alert('❌ ' + (result.message || 'Không thể đặt hàng'));
