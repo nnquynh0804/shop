@@ -106,7 +106,7 @@ async function fetchAndRenderProducts() {
 
 
 
-      const role = localStorage.getItem('role');
+      const role = sessionStorage.getItem('role');
       if (role === 'admin') {
         const adminActions = document.createElement('div');
         adminActions.className = 'admin-actions';
