@@ -73,6 +73,72 @@
       </iframe>
     </div>
   </section>
+  <script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const role = sessionStorage.getItem('role');
+    
+    if (role === 'admin') {
+      // Hiển thị admin-controls
+      const adminControls = document.getElementById('admin-controls');
+      if (adminControls) {
+        adminControls.style.display = 'block';
+      }
+
+      // Hiển thị phần quản lý đơn hàng
+      const orderSection = document.getElementById('admin-orders-section');
+      if (orderSection) {
+        orderSection.style.display = 'block';
+        loadOrders();
+      }
+    }
+  });
+
+  function loadOrders() {
+    fetch('https://backend-7j0i.onrender.com/orders')
+      .then(res => res.json())
+      .then(orders => {
+        const tbody = document.querySelector('#orders-table tbody');
+        tbody.innerHTML = '';
+
+        orders.forEach(order => {
+          const row = document.createElement('tr');
+          row.innerHTML = `
+            <td>${order._id}</td>
+            <td>${order.customerName}</td>
+            <td>${order.items.map(i => `${i.name} x${i.quantity}`).join('<br>')}</td>
+            <td>${order.total.toLocaleString()}₫</td>
+            <td>${order.status}</td>
+            <td>
+              <button onclick="updateOrder('${order._id}', 'Đã xử lý')" style="background-color:#27ae60; color:#fff; border:none; padding:4px 8px; cursor:pointer;">✔ Xử lý</button>
+              <button onclick="deleteOrder('${order._id}')" style="background-color:#c0392b; color:#fff; border:none; padding:4px 8px; cursor:pointer;">🗑 Xóa</button>
+            </td>
+          `;
+          tbody.appendChild(row);
+        });
+      })
+      .catch(err => {
+        console.error('Lỗi khi tải đơn hàng:', err);
+      });
+  }
+
+  function updateOrder(orderId, status) {
+    fetch(`https://backend-7j0i.onrender.com/orders/${orderId}`, {
+      method: 'PUT',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({ status })
+    })
+    .then(() => loadOrders());
+  }
+
+  function deleteOrder(orderId) {
+    if (confirm('Bạn có chắc chắn muốn xóa đơn hàng này không?')) {
+      fetch(`https://backend-7j0i.onrender.com/orders/${orderId}`, {
+        method: 'DELETE'
+      })
+      .then(() => loadOrders());
+    }
+  }
+</script>
 
   <!-- Footer -->
   <div id="footer-container"></div>
