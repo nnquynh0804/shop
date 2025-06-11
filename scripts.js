@@ -253,25 +253,35 @@ if (confirmCheckoutBtn) {
 function renderNavAuthLinks() {
   const nav = document.getElementById('nav-auth-links');
   const token = sessionStorage.getItem('token');
+
   if (!nav) return;
-  if (token) {
-    const userName = sessionStorage.getItem('userName') || 'Khách';
-    nav.innerHTML = `
-      <span>👋 Xin chào, ${userName}</span>
-      <a href="#" onclick="logout()">Đăng xuất</a>
-    `;
-    if(token === 'admin'){
-      nav.innerHTML = `
-      <a href=".content/orders.html">Quản lí đơn hàng</a>
-    `;
-    }
-  } else {
+
+  // Nếu chưa đăng nhập
+  if (!token) {
     nav.innerHTML = `
       <a href="login.html">Đăng nhập</a>
       <a href="register.html">Đăng ký</a>
     `;
+    return;
   }
+
+  // Nếu là admin
+  if (token === 'admin') {
+    nav.innerHTML = `
+      <a href="./content/orders.html">Quản lý đơn hàng</a>
+      <a href="#" onclick="logout()">Đăng xuất</a>
+    `;
+    return;
+  }
+
+  // Nếu là người dùng bình thường
+  const userName = sessionStorage.getItem('userName') || 'Khách';
+  nav.innerHTML = `
+    <span>👋 Xin chào, ${userName}</span>
+    <a href="#" onclick="logout()">Đăng xuất</a>
+  `;
 }
+
 
 function logout() {
   sessionStorage.removeItem('token');
