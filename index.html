@@ -110,6 +110,7 @@
   });
 
    function loadOrders() {
+      console.log('Bắt đầu tải đơn hàng...');
       fetch('https://backend-7j0i.onrender.com/orders')
         .then(res => res.json())
         .then(data => {
