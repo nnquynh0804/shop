@@ -262,6 +262,7 @@ function renderNavAuthLinks() {
     `;
   } else {
     nav.innerHTML = `
+      <a href="orders.html">Đơn Hàng</a>
       <a href="login.html">Đăng nhập</a>
       <a href="register.html">Đăng ký</a>
     `;
