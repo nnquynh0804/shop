@@ -102,6 +102,8 @@
       <tr style="background-color: #f0e5d8;">
         <th>Mã đơn</th>
         <th>Khách hàng</th>
+        <th>SĐT</th> <!-- Thêm dòng này -->
+        <th>Địa chỉ</th>
         <th>Sản phẩm</th>
         <th>Tổng tiền</th>
         <th>Trạng thái</th>
@@ -181,6 +183,8 @@
             row.innerHTML = `
               <td>${order._id}</td>
               <td>${order.shippingAddress.fullName}</td>
+              <td>${order.shippingAddress.phone || ''}</td>
+              <td>${order.shippingAddress.address || ''}</td>
               <td>${itemsHTML}</td>
               <td>${order.totalAmount.toLocaleString()}₫</td>
               <td>${order.orderStatus}</td>
