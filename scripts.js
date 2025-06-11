@@ -87,7 +87,7 @@ async function fetchAndRenderProducts() {
       div.className = 'product';
       div.innerHTML = `
       <div class="product-content" data-id="${product._id}" style="cursor:pointer;">
-        <img src="${product.images}" alt="${product.name}" />
+        <img src="${product.imageUrl}" alt="${product.name}" />
         <h3>${product.name}</h3>
         <p>${product.price.toLocaleString()}₫</p>
       </div>
