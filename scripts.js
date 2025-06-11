@@ -260,6 +260,11 @@ function renderNavAuthLinks() {
       <span>👋 Xin chào, ${userName}</span>
       <a href="#" onclick="logout()">Đăng xuất</a>
     `;
+    if(token === 'admin'){
+      nav.innerHTML = `
+      <a href=".content/orders.html">Quản lí đơn hàng</a>
+    `;
+    }
   } else {
     nav.innerHTML = `
       <a href="login.html">Đăng nhập</a>
