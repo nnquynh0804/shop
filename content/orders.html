@@ -206,14 +206,28 @@
       .then(() => loadOrders());
     }
 
-    function deleteOrder(orderId) {
-      if (confirm('Bạn có chắc chắn muốn xóa đơn hàng này không?')) {
-        fetch(`https://backend-7j0i.onrender.com/orders/${orderId}`, {
-          method: 'DELETE'
-        })
-        .then(() => loadOrders());
-      }
+    async function deleteOrder(orderId) {
+  const confirmed = confirm('❗Bạn có chắc muốn xóa đơn hàng này không?');
+  if (!confirmed) return;
+
+  try {
+    const res = await fetch(`https://backend-7j0i.onrender.com/orders/${orderId}`, {
+      method: 'DELETE'
+    });
+
+    if (res.ok) {
+      alert('✅ Đơn hàng đã được xóa');
+      loadOrders(); // Cập nhật lại danh sách
+    } else {
+      const result = await res.json();
+      alert('❌ Không thể xóa đơn hàng: ' + (result.message || 'Lỗi không xác định'));
     }
+  } catch (err) {
+    alert('❌ Lỗi khi kết nối đến máy chủ!');
+    console.error(err);
+  }
+}
+
   </script>
 </body>
 </html>
