@@ -266,14 +266,14 @@ function renderNavAuthLinks() {
   }
 
   // Nếu là admin
-  if (token === 'Admin User') {
+  if (role === 'Admin User') {
     nav.innerHTML = `
       <a href="./content/orders.html">Quản lý đơn hàng</a>
       <a href="#" onclick="logout()">Đăng xuất</a>
     `;
     return;
   }
-
+  else{
   // Nếu là người dùng bình thường
   const userName = sessionStorage.getItem('userName') || 'Khách';
   nav.innerHTML = `
