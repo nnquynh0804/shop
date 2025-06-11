@@ -211,7 +211,7 @@
         const result = await res.json();
         if (res.ok) {
           alert('✅ Thêm sản phẩm thành công!');
-          location.href = '.index.html';
+          location.href = '/index.html';
         } else {
           alert('❌ Lỗi: ' + (result.message || 'Không thêm được sản phẩm'));
         }
