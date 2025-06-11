@@ -1,66 +1,76 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-  <meta charset="UTF-8">
-  <title>Chỉnh sửa sản phẩm</title>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/dropzone/5.9.3/min/dropzone.min.css" integrity="sha512-TMfSkU8+T1p8U/raPBnh5UQgmi2OwEDEJh8TUS7UZv2H5eHdOKWyUMhChMFS+T6e1pWoygc2f9rBGeJq79zfjQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <meta charset="UTF-8" />
+  <title>Sửa sản phẩm</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet" />
   <style>
+    /* Giữ nguyên toàn bộ CSS như form thêm */
     body {
-      font-family: 'Segoe UI', sans-serif;
-      background-color: #fdfaf6;
-      margin: 0;
-      padding: 40px 20px;
+      font-family: 'Inter', sans-serif;
+      padding: 30px;
+      background: linear-gradient(to right, #fdf6ec, #fffefc);
       display: flex;
       justify-content: center;
     }
-
-    form {
-      background: white;
-      padding: 30px;
-      border-radius: 10px;
-      max-width: 500px;
-      width: 100%;
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-    }
-
     h1 {
-      text-align: center;
       color: #6b4f3b;
+      margin-bottom: 20px;
+      text-align: center;
     }
-
+    form {
+      background-color: #fff;
+      padding: 25px;
+      border-radius: 10px;
+      max-width: 550px;
+      width: 100%;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.1);
+      border: 1px solid #eee;
+    }
     label {
       display: block;
-      margin-top: 15px;
-      font-weight: bold;
-      color: #333;
+      margin-top: 18px;
+      font-weight: 600;
+      color: #5a3e2b;
     }
-
     input[type="text"],
-    input[type="number"] {
+    input[type="number"],
+    input[type="file"] {
       width: 100%;
-      padding: 10px;
-      margin-top: 5px;
+      padding: 10px 12px;
+      margin-top: 6px;
       border: 1px solid #ccc;
       border-radius: 6px;
-      font-size: 16px;
+      font-size: 14px;
+      transition: 0.2s border;
     }
-
+    input:focus {
+      border-color: #c08e6e;
+      outline: none;
+    }
+    #drop-zone {
+      margin-top: 10px;
+      padding: 25px;
+      border: 2px dashed #c8b6a6;
+      text-align: center;
+      color: #8c7b6c;
+      border-radius: 8px;
+      background-color: #fff8f2;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+    #drop-zone.hover {
+      border-color: #a18872;
+      background-color: #f9efe4;
+    }
     #preview {
-      margin-top: 15px;
+      margin-top: 12px;
       max-width: 100%;
       height: auto;
       display: none;
-      border: 1px solid #ccc;
-      padding: 4px;
-      border-radius: 4px;
+      border-radius: 6px;
+      border: 1px solid #ddd;
     }
-
-    .dz-message {
-      text-align: center;
-      color: #888;
-      font-size: 14px;
-    }
-
     button {
       margin-top: 25px;
       padding: 12px 20px;
@@ -68,125 +78,169 @@
       color: white;
       border: none;
       border-radius: 6px;
-      font-size: 16px;
-      width: 100%;
       cursor: pointer;
-      transition: background-color 0.2s ease;
+      font-weight: 600;
+      font-size: 15px;
+      transition: background 0.2s;
     }
-
     button:hover {
       background-color: #8d6e57;
-    }
-
-    @media (max-width: 600px) {
-      body {
-        padding: 20px 10px;
-      }
     }
   </style>
 </head>
 <body>
   <form id="edit-form">
-    <h1>✏️ Chỉnh sửa sản phẩm</h1>
+    <h1>✏️ Sửa sản phẩm</h1>
 
-    <label>Tên sản phẩm</label>
-    <input type="text" id="name" required>
+    <input type="hidden" id="productId" />
 
-    <label>Giá</label>
-    <input type="number" id="price" required>
+    <label>📛 Tên sản phẩm</label>
+    <input type="text" id="name" required />
 
-    <label>Số lượng</label>
-    <input type="number" id="quantity" required>
+    <label>💰 Giá</label>
+    <input type="number" id="price" required />
 
-    <label>Link ảnh (sẽ được cập nhật tự động sau khi tải ảnh)</label>
-    <input type="text" id="images" placeholder="https://..." required>
+    <label>📦 Số lượng</label>
+    <input type="number" id="quantity" required />
 
-    <label>Ảnh minh họa</label>
-    <div id="my-dropzone" class="dropzone"></div>
-    <img id="preview" alt="Xem trước ảnh">
+    <label>🖼️ Ảnh minh họa</label>
+    <input type="text" id="images" placeholder="https://..." readonly required />
 
-    <button type="submit">💾 Cập nhật sản phẩm</button>
+    <label for="fileInput">📤 Chọn ảnh từ máy tính (nếu muốn thay)</label>
+    <input type="file" id="fileInput" accept="image/*" />
+    <div id="drop-zone">📥 Hoặc kéo và thả ảnh vào đây</div>
+
+    <img id="preview" src="#" alt="Ảnh minh họa" />
+
+    <button type="submit">💾 Lưu thay đổi</button>
   </form>
 
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/dropzone/5.9.3/min/dropzone.min.js" integrity="sha512-/GFKNX0yglJizfQgZJzOrZKPI+X0/y9XrCo8h2n/YIoTkK6OGvXb+YI+qJSWdyL6LdnAIKwGweF7n0CZViWmmA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
   <script>
-    Dropzone.autoDiscover = false;
+    const CLOUD_NAME = 'duuhiiwlu';
+    const UPLOAD_PRESET = 'unsigned_preset';
 
-    const id = new URLSearchParams(window.location.search).get('id');
+    const urlParams = new URLSearchParams(window.location.search);
+    const id = urlParams.get('id');
 
+    const form = document.getElementById('edit-form');
     const nameInput = document.getElementById('name');
     const priceInput = document.getElementById('price');
     const quantityInput = document.getElementById('quantity');
-    const imagesInput = document.getElementById('imageUrl');
+    const imagesInput = document.getElementById('images');
     const preview = document.getElementById('preview');
+    const dropZone = document.getElementById('drop-zone');
+    const fileInput = document.getElementById('fileInput');
+    const productIdInput = document.getElementById('productId');
 
-    async function fetchData() {
-      const res = await fetch(`https://backend-7j0i.onrender.com/products/${id}`);
-      const p = await res.json();
-      nameInput.value = p.name || '';
-      priceInput.value = p.price || 0;
-      quantityInput.value = p.quantity || 0;
-      imagesInput.value = p.imageUrl || '';
-      if (p.imageUrl) {
-        preview.src = p.imageUrl;
+    async function uploadImageToCloudinary(file) {
+      const formData = new FormData();
+      formData.append('file', file);
+      formData.append('upload_preset', UPLOAD_PRESET);
+
+      try {
+        const res = await fetch(`https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`, {
+          method: 'POST',
+          body: formData
+        });
+        const data = await res.json();
+        if (res.ok && data.secure_url) {
+          return data.secure_url;
+        } else {
+          throw new Error(data.error?.message || 'Upload thất bại');
+        }
+      } catch (err) {
+        alert('❌ Upload ảnh thất bại: ' + err.message);
+        return null;
+      }
+    }
+
+    async function handleFileUpload(file) {
+      if (!file?.type.startsWith('image/')) {
+        return alert('Vui lòng chọn tệp ảnh.');
+      }
+
+      imagesInput.value = '';
+      preview.style.display = 'none';
+
+      const url = await uploadImageToCloudinary(file);
+      if (url) {
+        imagesInput.value = url;
+        preview.src = url;
         preview.style.display = 'block';
       }
     }
 
-    document.getElementById('edit-form').addEventListener('submit', async (e) => {
+    dropZone.addEventListener('dragover', e => {
+      e.preventDefault();
+      dropZone.classList.add('hover');
+    });
+
+    dropZone.addEventListener('dragleave', () => dropZone.classList.remove('hover'));
+    dropZone.addEventListener('drop', async e => {
+      e.preventDefault();
+      dropZone.classList.remove('hover');
+      const file = e.dataTransfer.files[0];
+      await handleFileUpload(file);
+    });
+
+    fileInput.addEventListener('change', async e => {
+      const file = e.target.files[0];
+      await handleFileUpload(file);
+    });
+
+    async function fetchProduct() {
+      try {
+        const res = await fetch(`https://backend-7j0i.onrender.com/products/${id}`);
+        const data = await res.json();
+
+        if (!res.ok) {
+          throw new Error('Không tìm thấy sản phẩm');
+        }
+
+        productIdInput.value = data.id;
+        nameInput.value = data.name;
+        priceInput.value = data.price;
+        quantityInput.value = data.quantity;
+        imagesInput.value = data.imageUrl;
+        preview.src = data.imageUrl;
+        preview.style.display = 'block';
+
+      } catch (err) {
+        alert('❌ Lỗi tải sản phẩm: ' + err.message);
+      }
+    }
+
+    form.addEventListener('submit', async e => {
       e.preventDefault();
 
-      const data = {
-        name: nameInput.value,
-        price: parseFloat(priceInput.value),
-        quantity: parseInt(quantityInput.value),
-        images: imagesInput.value
+      const product = {
+        name: nameInput.value.trim(),
+        price: +priceInput.value,
+        quantity: +quantityInput.value,
+        imageUrl: imagesInput.value.trim()
       };
 
-      const res = await fetch(`https://backend-7j0i.onrender.com/products/${id}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(data)
-      });
+      try {
+        const res = await fetch(`https://backend-7j0i.onrender.com/products/${id}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(product)
+        });
 
-      if (res.ok) {
-        alert('✅ Đã cập nhật sản phẩm!');
-        window.location.href = '/index.html';
-      } else {
-        alert('❌ Cập nhật thất bại');
+        if (res.ok) {
+          alert('✅ Sản phẩm đã được cập nhật!');
+          location.href = '/index.html';
+        } else {
+          const result = await res.json();
+          alert('❌ Lỗi: ' + (result.message || 'Không thể cập nhật'));
+        }
+      } catch (err) {
+        alert('❌ Lỗi kết nối: ' + err.message);
       }
     });
 
-    // Dropzone cấu hình Cloudinary
-    const myDropzone = new Dropzone("#my-dropzone", {
-      url: "https://api.cloudinary.com/v1_1/duuhiiwlu/image/upload",
-      method: "post",
-      paramName: "file",
-      maxFiles: 1,
-      acceptedFiles: "image/*",
-      addRemoveLinks: true,
-      init: function () {
-        this.on("sending", function (file, xhr, formData) {
-          formData.append("upload_preset", "unsigned_preset");
-        });
-
-        this.on("success", function (file, response) {
-          const imageUrl = response.secure_url;
-          imagesInput.value = imageUrl;
-          preview.src = imageUrl;
-          preview.style.display = "block";
-        });
-
-        this.on("error", function (file, errorMessage) {
-          alert("❌ Upload thất bại: " + errorMessage);
-        });
-      }
-    });
-
-    // Gọi API để lấy dữ liệu sản phẩm hiện tại
-    fetchData();
+    // Gọi khi trang tải
+    fetchProduct();
   </script>
 </body>
 </html>
